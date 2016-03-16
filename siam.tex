@@ -71,12 +71,11 @@ columns=fixed
 
 \newenvironment{chaospy}[1]
 {\color{gray!30!black}
-     \color{gray!30!black}
      \usebackgroundtemplate{
    \begin{tikzpicture}[remember picture, overlay]
-     \node[anchor = center, opacity=.25] (image) at (current page.center) {\includegraphics[scale=0.25]{chaospy_logo.jpg}};
+     \node[anchor = center, opacity=.15] (image) at (current page.center) {\includegraphics[scale=0.25]{chaospy_logo.jpg}};
    \end{tikzpicture}}
-     \begin{frame}[fragile,environment=chaospy]
+     \begin{frame}[fragile, environment=chaospy]
     \frametitle{{#1}}}
 {\end{frame}}
 
@@ -109,69 +108,169 @@ columns=fixed
 \end{frame}
 
 
-\begin{frame}[fragile]{Chaospy is a Python toolbox for uncertainty quantification, developed by Jonathan Feinberg}
-  \begin{center}
-     \includegraphics[width=.7\textwidth]{chaospy_logo.jpg}
-  \end{center}
-%     \begin{alert}{A very basic introduction to scientific Python programming:}
-%     \scriptsize
-%       \href{http://hplgit.github.io/bumpy/doc/pub/sphinx-basics/index.html}{http://hplgit.github.io/bumpy/doc/pub/sphinx-basics/index.html}\\
-% %\verb;http://hplgit.github.io/bumpy/doc/pub/sphinx-basics/index.html;
-%   \end{alert}
-  \begin{alert}{Installation instructions:}\\
-  \scriptsize
-      \href{https://github.com/hplgit/chaospy}{https://github.com/hplgit/chaospy}\\
-%\verb;http://github.com/hplgit/chaospy/;
-  \end{alert}
+% \begin{frame}[fragile]{Chaospy is a Python toolbox for uncertainty quantification, developed by Jonathan Feinberg}
+%   \begin{center}
+%      \includegraphics[width=.8\textwidth]{chaospy_logo.jpg}
+%   \end{center}
+% %     \begin{alert}{A very basic introduction to scientific Python programming:}
+% %     \scriptsize
+% %       \href{http://hplgit.github.io/bumpy/doc/pub/sphinx-basics/index.html}{http://hplgit.github.io/bumpy/doc/pub/sphinx-basics/index.html}\\
+% % %\verb;http://hplgit.github.io/bumpy/doc/pub/sphinx-basics/index.html;
+% % %   \end{alert}
+% %   \begin{alert}{Installation instructions:}\\
+% %   \scriptsize
+% %       \href{https://github.com/hplgit/chaospy}{https://github.com/hplgit/chaospy}\\
+% % %\verb;http://github.com/hplgit/chaospy/;
+% %   \end{alert}
+% \end{frame}
+
+
+
+\begin{frame}[fragile]{This presentation focuses on Chaospy, a Python toolbox for uncertainty quantification, developed by Jonathan Feinberg}
+
+
+
+  \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+    \node [align=left, xshift=-0.4\textwidth,yshift=0.1\textwidth] (image1) at (current page.center)
+          {\includegraphics[width = 0.25\textwidth]{samples.png}};
+    \node[align=left] at (image1.east) {\hspace{7cm} \bf Monte Carlo methods using Chaospy};
+  \end{tikzpicture}
+
+\pause
+    \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+      \node [align=left, xshift=-0.2\textwidth,yshift=-0.1\textwidth] (image2) at (current page.center)
+            {\includegraphics[width = 0.25\textwidth]{pc.png}};
+      \node[align=left] at (image2.east) {\hspace{7cm} \bf Polynomial Chaos using Chaospy};
+    \end{tikzpicture}
+
+\pause
+  \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+    \node [align=left, xshift=0\textwidth,yshift=-0.3\textwidth] (image3) at (current page.center)
+          {\includegraphics[width = 0.2\textwidth]{chaospy_logo.jpg}};
+    \node[align=left] at (image3.east) {\hspace{5cm} \bf Properties of Chaospy};
+  \end{tikzpicture}
+
+
 \end{frame}
 
 
-\begin{frame}[fragile]{This talk will focus on}
-  
-\end{frame}
 
 
 
-\begin{frame}[fragile]
-  {Introducing a testcase as a working example}
-  \pause
+
+
+\begin{frame}
+ \frametitle{Our model problem will be a simple differential equation}
+ \vspace{-10mm}
   \begin{align*}
-    \frac{d u(x)}{dx} & =-au(x) & u(0) &= I
+    \frac{d u(x)}{dx} & =-au(x),\qquad u(0) = I
   \end{align*}
+  \vspace{-5 mm}
   \begin{itemize}
     \item[$u$] The quantity of interest
     \item[$x$] Spatial location
     \item[$a,I$] Parameters containting uncertainties
   \end{itemize}
-  \pause
-  \begin{center}
-    \includegraphics[width=.5\textwidth]{probspace.png}
-  \end{center}
-\end{frame}
-
-
-
-\begin{frame}
- {This model can be analysed analytically}
- \[
- u(x; a, I) = Ie^{-ax}
- \]
-%  \[E(u) = \int_0^{10}\]
-\pause
+\vspace{8 mm}
+ \pause
 Initially assume model parameters:
 \begin{align*}
-a &\sim \text{Uniform(0, 0.1)} \sim f_a(a) & I&=1\hbox{ (known)}
+a &\sim \text{Uniform(0, 0.1)} & I& \sim \text{Uniform(8, 10)}
 \end{align*}
+
 \pause
-  \begin{align*}
-      \E{u} &=  \int\limits_{-\infty}^{\infty} u(x;a)f_a(a)da=
-            10\int_0^{0.1}e^{-ax}da
-    = 10\frac{1-   e^{-0.1x}}{x} \\
-    \onslide<4->{ \Var{u} & =\int\limits_{-\infty}^{\infty} (u(x;a)-
-    \E{u})^2f_a(a)da \\
-      &= 20\frac{1 - e^{-0.2ax}}{x} - \left(10\frac{1-e^{-0.1x}}{x}\right)^2}
- \end{align*}
+\vspace{5mm}
+We want to compute E(u) and Var(u).
+
 \end{frame}
+
+
+
+%
+% \begin{frame}[fragile]
+%   {Introducing a testcase as a working example}
+%   \pause
+%   \begin{align*}
+%     \frac{d u(x)}{dx} & =-au(x) & u(0) &= I
+%   \end{align*}
+%   \begin{itemize}
+%     \item[$u$] The quantity of interest
+%     \item[$x$] Spatial location
+%     \item[$a,I$] Parameters containting uncertainties
+%   \end{itemize}
+%   \pause
+%   \begin{center}
+%     \includegraphics[width=.5\textwidth]{probspace.png}
+%   \end{center}
+% \end{frame}
+%
+% \begin{frame}
+%  \frametitle{Our model problem will be a simple differential equation}
+%  \vspace{-3 mm}
+%   \begin{align*}
+%     \frac{d u(x)}{dx} & =-au(x), & u(0) &= I
+%   \end{align*}
+%   \vspace{-2 mm}
+%
+%   \begin{itemize}
+%     \item[$u$] The quantity of interest
+%     \item[$x$] Spatial location
+%     \item[$a,I$] Parameters containting uncertainties
+%   \end{itemize}
+% \vspace{5 mm}
+%  \pause
+%  Initially assume model parameters:
+% \begin{align*}
+% a &\sim \text{Uniform(0, 0.1)} \sim f_a(a) & I&=1\hbox{ (known)}
+% \end{align*}
+% \pause
+% \vspace{3mm}
+% We want to compute E(u) and Var(u).
+%
+% \end{frame}
+
+
+%
+% \begin{frame}
+%  {This model can be analysed analytically}
+%
+%  Analytical solution
+%  \[
+%  u(x; a, I) = Ie^{-ax}
+%  \]
+%
+% \pause
+% Mean and Variance
+%   \begin{align*}
+%       \E{u} &=  \int\limits_{-\infty}^{\infty} u(x;a)f_a(a)da=
+%             10\int_0^{0.1}e^{-ax}da
+%     = 10\frac{1-   e^{-0.1x}}{x} \\
+%     \onslide<4->{ \Var{u} & =\int\limits_{-\infty}^{\infty} (u(x;a)-
+%     \E{u})^2f_a(a)da \\
+%       &= 20\frac{1 - e^{-0.2ax}}{x} - \left(10\frac{1-e^{-0.1x}}{x}\right)^2}
+%  \end{align*}
+% \end{frame}
+
+%
+% \begin{frame}
+%  {This model has a analytical solution to compare to our numerical solution}
+%
+%  Analytical solution:
+%  \[
+%  u(x; a, I) = Ie^{-ax}
+%  \]
+% \pause
+%
+% The errors in our numerical methods are:
+%
+% \begin{align*}
+%     \varepsilon_E &= \int|\E{u} - \E{\hat{u}}|\,dx \\
+%     \varepsilon_{Var} &= \int|\Var{u} - \Var{\hat{u}}|\,dx
+% \end{align*}
+%
+%
+% \end{frame}
+
 
 
 
@@ -183,6 +282,16 @@ a &\sim \text{Uniform(0, 0.1)} \sim f_a(a) & I&=1\hbox{ (known)}
   \end{figure}
 \end{frame}
 
+%
+% \begin{chaospy}{Creating multivariate probability distributions in Chaospy}
+% \begin{lstlisting}[language=python]
+% dist_a = cp.Uniform(0, 0.1)
+% dist_I = cp.Uniform(8, 10)
+% |\pause|
+% dist = cp.J(dist_a, dist_I)
+% \end{lstlisting}
+% \end{chaospy}
+
 
 \begin{chaospy}{Monte Carlo with Chaospy}
     \scriptsize
@@ -190,17 +299,19 @@ a &\sim \text{Uniform(0, 0.1)} \sim f_a(a) & I&=1\hbox{ (known)}
 import chaospy as cp
 import numpy as np
 
-def u(x, a):
-    return np.exp(-a*x)
+def u(x, a, I):
+    return I*np.exp(-a*x)
 
 |\pause|
-dist_a = cp.Uniform(0,0.1)
-
-samples_a = dist_a.sample(size=1000)
+dist_a = cp.Uniform(0, 0.1)
+dist_I = cp.Uniform(8, 10)
+dist = cp.J(dist_a, dist_I)
+|\pause|
+samples = dist.sample(size=1000)
 |\pause|
 x = np.linspace(0, 10, 100)
 |\pause|
-samples_u = [u(x, a) for a in samples_a]
+samples_u = [u(x, a, I) for a, I in samples]
 |\pause|
 E = np.mean(samples_u, 0)
 Var = np.var(samples_u, 0)
@@ -261,21 +372,6 @@ Var = np.var(samples_u, 0)
 
 \begin{frame}{Sampling schemes in Chaospy}
 \begin{center}
- %
- % \begin{tabular}{lll}
- %     Key &    Name              &  Nested\\\hline
- %    K &    Korobov            & no\\
- %    R &    (Pseudo-)Random    & no\\
- %    L &    Latin hypercube    & no\\
- %    S &    Sobol              & yes\\
- %    H &    Halton             & yes\\
- %    M&     Hammersley         & yes \\\hline
- %  C &    Clenshaw Curtis    & no\\
- %    G &    Gaussian quadrature& no\\
- %    E & Gauss-Legendre & no\\\hline
- % \end{tabular}
-
-
   \begin{tabular}{llll}
    Key & & &  Name            \\\hline
      K & & &  Korobov            \\
@@ -295,14 +391,25 @@ Var = np.var(samples_u, 0)
 
 
 
+% \begin{frame}
+%   \frametitle{Convergence of Monte Carlo is slow}
+%   \begin{align*}
+%       \varepsilon_E &= \int_0^{10}|\E{u} - \E{\hat{u}}|\,dx &
+%       \varepsilon_{Var} &= \int_0^{10}|\Var{u} - \Var{\hat{u}}|\,dx
+%   \end{align*}
+%   \begin{center}
+%     \includegraphics[width=0.75\textwidth]{MC_convergence_1D_1.png}
+%   \end{center}
+% \end{frame}
+
 \begin{frame}
   \frametitle{Convergence of Monte Carlo is slow}
-  \begin{align*}
-      \varepsilon_E &= \int_0^{10}|\E{u} - \E{\hat{u}}|\,dx &
-      \varepsilon_{Var} &= \int_0^{10}|\Var{u} - \Var{\hat{u}}|\,dx
-  \end{align*}
+  % \begin{align*}
+  %     \varepsilon_E &= \int_0^{10}|\E{u} - \E{\hat{u}}|\,dx &
+  %     \varepsilon_{Var} &= \int_0^{10}|\Var{u} - \Var{\hat{u}}|\,dx
+  % \end{align*}
   \begin{center}
-    \includegraphics[width=0.75\textwidth]{MC_convergence_1D_1.png}
+    \includegraphics[width=1\textwidth]{MC_convergence_2D.png}
   \end{center}
 \end{frame}
 
@@ -325,99 +432,92 @@ Var = np.var(samples_u, 0)
 
 
 \begin{frame}
-  \frametitle{The idea behind Polynomial Chaos (PC) theory is to approximate our model with a polynomial}
+  \frametitle{The idea behind Polynomial Chaos (PC) theory is to approximate our model with a polynomial orthogonal in probability space}
   \begin{align*}
       u(x;a) & &\approx && \hat u_M(x;a) && =
       && \sum_{n=0}^N && c_n(x)\quad && P_n(a),\quad && N &= M+1\\
       &&  &&  &&  &&  && \text{Coefficient} && \text{Polynomial}
   \end{align*}
-\end{frame}
-
-
-\begin{frame}{The mean and variance now have a simple form}{}
-    \begin{alert}{Assumption:}
-        $P_0 = 1$
-    \end{alert}
-    \begin{align*}
-        \onslide<3->{\E{\hat u_M} &=
-        \E{\sum_{n=0}^N c_n P_n}}
+  The mean and variance now have a simple form
+  \begin{align*}
+        \E{\hat u_M}&=c_0
         &
-        \onslide<7->{\Var{\hat u_M} &=
-        \Var{\sum_{n=0}^N c_n P_n}}
-        \\
-        \onslide<4->{&=
-        \sum_{n=0}^N c_n \E{P_n}}
-        &
-        \onslide<8->{&=
-        \sum_{\substack{n=0\\m=0}}^N c_n c_m
-        \left(\E{\!P_nP_m\!}\!-\!\E{\!P_n\!}\!\E{\!P_m\!}\right)}
-        \\
-        \onslide<5->{&=
-        \sum_{n=0}^N c_n \inner{P_n, P_0}}
-        &
-        \onslide<9->{&=
-        \sum_{\substack{n=0\\m=0}}^N c_nc_m\inner{P_n,P_m}-c_0^2}
-        \\
-        \onslide<6->{\E{\hat u_M}&=c_0}
-        &
-        \onslide<10->{\Var{\hat u_M}&=
-        \sum_{n=1}^N c_n^2\norm{P_n}}
+        \Var{\hat u_M}&=\sum_{n=1}^N c_n^2\norm{P_n}
     \end{align*}
+
 \end{frame}
+
+
+% \begin{frame}{The mean and variance now have a simple form}{}
+%     \begin{alert}{Assumption:}
+%         $P_0 = 1$
+%     \end{alert}
+%     \begin{align*}
+%         \onslide<3->{\E{\hat u_M} &=
+%         \E{\sum_{n=0}^N c_n P_n}}
+%         &
+%         \onslide<7->{\Var{\hat u_M} &=
+%         \Var{\sum_{n=0}^N c_n P_n}}
+%         \\
+%         \onslide<4->{&=
+%         \sum_{n=0}^N c_n \E{P_n}}
+%         &
+%         \onslide<8->{&=
+%         \sum_{\substack{n=0\\m=0}}^N c_n c_m
+%         \left(\E{\!P_nP_m\!}\!-\!\E{\!P_n\!}\!\E{\!P_m\!}\right)}
+%         \\
+%         \onslide<5->{&=
+%         \sum_{n=0}^N c_n \inner{P_n, P_0}}
+%         &
+%         \onslide<9->{&=
+%         \sum_{\substack{n=1\\m=1}}^N c_nc_m\inner{P_n,P_m}-c_0^2}
+%         \\
+%         \onslide<6->{\E{\hat u_M}&=c_0}
+%         &
+%         \onslide<10->{\Var{\hat u_M}&=
+%         \sum_{n=1}^N c_n^2\norm{P_n}}
+%     \end{align*}
+% \end{frame}
 
 
 
 \begin{frame}
  \frametitle{The computational essence of Polynomial Chaos}
 \[\hat u_M(x;q) = \sum_{n=0}^N c_n(x) P_n(q)\]
+\vspace{10mm}
 
  We need to find the orthogonal polynomials $P_n(q)$ and the coefficients $c_n(x)$.
-
-%
-%  \begin{align*}
-%      c_n(x) &= \frac{\inner{ u,P_n}}{\norm{P_n}^2}
-%      \onslide<2->{=\frac{\E{uP_n}}{\E{P_n^2}}} \\
-%      \onslide<3-> {&=\frac{1}{\E{P_n^2}} \int u(x;q)P_n(q)f_Q(q)dq}
-% \onslide<4-> {\approx\\
-% \hat{c}_n(x) &= \frac{1}{\E{P_n^2}} \sum_{k=0}^K
-% P_n(q_k)u(x;q_k)f(q_k)\omega_k}
-% \end{align*}
-% \onslide<4->
-% The numerical integral approximation is named \emph{pseudo-spectral method}.\\
-%
-% \onslide<3->
-% $q_k$ quadrature nodes, $\omega_k$ quadrature weights
 
 \end{frame}
 
 
 
-\begin{frame}
- {The only numerically stable method for
- calculating orthogonal polynomials is through the three-term discretized
- Stiltjes recursion}
- \pause
- Three terms recursion relation:
- \begin{align*}
-     P_{n+1} &= (x-A_n) P_n - B_n P_{n-1} &
-     P_{-1} &= 0 & P_0 &= 1,
- \end{align*}
-    \pause
-   where
-   \begin{align*}
-   A_n &= \frac{\langle qP_n,P_n\rangle_Q}{\norm{P_n}^2}
-   &
-  B_n &=
-  \begin{cases}
-  \frac{\norm{P_n}^2}{\norm{P_{n-1}}^2} & n > 0\\
-  \norm{P_n}^2 & n = 0
-  \end{cases}
-   \end{align*}
-  \end{frame}
+% \begin{frame}
+%  {The only numerically stable method for
+%  calculating orthogonal polynomials is through the three-term discretized
+%  Stiltjes recursion}
+%  \pause
+%  Three terms recursion relation:
+%  \begin{align*}
+%      P_{n+1} &= (x-A_n) P_n - B_n P_{n-1} &
+%      P_{-1} &= 0 & P_0 &= 1,
+%  \end{align*}
+%     \pause
+%    where
+%    \begin{align*}
+%    A_n &= \frac{\langle qP_n,P_n\rangle_Q}{\norm{P_n}^2}
+%    &
+%   B_n &=
+%   \begin{cases}
+%   \frac{\norm{P_n}^2}{\norm{P_{n-1}}^2} & n > 0\\
+%   \norm{P_n}^2 & n = 0
+%   \end{cases}
+%    \end{align*}
+%   \end{frame}
 
 
 
-  \begin{chaospy}{Three terms recursion in Chaospy}
+\begin{chaospy}{The only numerically stable method for calculating orthogonal polynomials is through the three-term discretized Stiltjes recursion}
 \begin{lstlisting}[language=python]
 dist_a = cp.Normal()
 P = cp.orth_ttr(3, dist_a)
@@ -468,24 +568,8 @@ print weights
 \end{chaospy}
 
 
-
- \begin{frame}{A two-dimensional problem}
- \[  u(x; a, I) = Ie^{-ax}\]
-\pause
-Uncertain model parameters:
-\begin{align*}
-a &\sim \text{Uniform(0, 0.1)} & I&= \text{Uniform(8, 10)}
-\end{align*}
- \pause
-   \begin{align*}
-  \varepsilon_E &= \int_0^{10}|E(u) - E(\hat{u})|\,dx &
-  \varepsilon_{Var} &= \int_0^{10}|Var(u) - Var(\hat{u})|\,dx
-  \end{align*}
-\end{frame}
-
-
 \begin{frame}
- \frametitle{Convergence of the two-dimensional $(a,I)$ problem}
+ \frametitle{Convergence of our model problem}
  % TODO
  % high: error formulae
 %   \begin{align*}
@@ -494,7 +578,7 @@ a &\sim \text{Uniform(0, 0.1)} & I&= \text{Uniform(8, 10)}
 %   \end{align*}
 
 \begin{figure}
-    \includegraphics[width=0.85\textwidth]{MC_convergence_2D.png}
+    \includegraphics[width=1\textwidth]{MC-PC_convergence_2D.png}
   \end{figure}
 
  \end{frame}
@@ -521,14 +605,16 @@ nodes, weights = cp.generate_quadrature(3, dist)
 x = np.linspace(0, 10, 100)
 samples_u = [u(x, *node) for node in nodes.T]
 |\pause|
-u_hat = cp.fit_quadrature(P, nodes, weights, samples_u)
+u_hat = cp.fit_quadrature(P, nodes, weights, samples_u
+                          rule="Gaussian")
 |\pause|
-mean, var = cp.E(u_hat, dist), cp.Var(u_hat, dist)
+mean, cp.E(u_hat, dist)
+var = cp.Var(u_hat, dist)
 \end{lstlisting}
 \end{chaospy}
 
 
-\begin{frame}{Different problems require different schemes}{}
+\begin{frame}{Different problems require different quadrature rules}{}
 \begin{tabular}{|ll|l|}
 \hline
  Key & & Description\\\hline
@@ -565,7 +651,7 @@ minimization in a vector space as in regression (or overdetermined matrix system
 
 
 
-\begin{chaospy}{Code for least square minimization}
+\begin{chaospy}{Code for point collocation}
     % TODO
     % remove "H" and rule="LS" and simulate again again.
     \scriptsize
@@ -589,16 +675,17 @@ u_hat = cp.fit_regression(P, nodes, samples_u)
 
 
 
-\begin{frame}{What is best of pseudo-spectral and point collocation method? It's problem dependent!}{}
-    % TODO
-    % Plot!
-    % SC nested-CC sparsegrid vs. PC with S-rule and LS-fit vs. MC
-      \begin{figure}
-  \includegraphics[width=0.85\textwidth]{MC_convergence_2D_diff.png}
- \end{figure}
-\end{frame}
+% \begin{frame}{What is best of pseudo-spectral and point collocation method? It's problem dependent!}{}
+%     % TODO
+%     % Plot!
+%     % SC nested-CC sparsegrid vs. PC with S-rule and LS-fit vs. MC
+%       \begin{figure}
+%   \includegraphics[width=0.85\textwidth]{MC_convergence_2D_diff.png}
+%  \end{figure}
+% \end{frame}
 
-\begin{frame}{Which method to choose for your problem}{}
+
+\begin{frame}{Which method to choose for your problem depends on the problem}{}
     \scriptsize
     \begin{tabular}{r|lll}
         & \bf Pseudo-spectral &
@@ -612,57 +699,100 @@ u_hat = cp.fit_regression(P, nodes, samples_u)
     \end{tabular}
 \end{frame}
 
-\begin{chaospy}{A surrogate model allows for computational cheap statistical analysis}
+
+% \begin{chaospy}{A surrogate model allows for computational cheap statistical analysis}
+%     \scriptsize
+%  \begin{lstlisting}[language=python]
+% u_hat, c_hat = cp.fit_quadrature(
+%         P, nodes, weights, solves, retall=True)
+% |\pause|
+% mean =  cp.E(u_hat, dist)
+% var = cp.Var(u_hat, dist)
+% |\pause|
+%
+% mean = c_hat[0]
+% norms2 = cp.E(P**2, dist)[1:]
+% c2 = c_hat[1:]**2
+% var = np.sum(c2*norms2)
+% |\pause|
+%
+% samples_q = dist.sample(10**6)
+% samples_u = u_hat(*samples_q)
+% mean = np.mean(samples_u,1)
+% var = np.var(samples_u,1)
+% \end{lstlisting}
+% \end{chaospy}
+
+
+
+\begin{chaospy}{The polynomial approximation can be used as a surrogate model, which allows for computational cheap statistical analysis}
     \scriptsize
  \begin{lstlisting}[language=python]
-u_hat, c_hat = cp.fit_quadrature(
-        P, nodes, weights, solves, retall=True)
+u_hat = cp.fit_quadrature(P, nodes, weights, solves)
 |\pause|
 mean =  cp.E(u_hat, dist)
 var = cp.Var(u_hat, dist)
 |\pause|
 
-mean = c_hat[0]
-norms2 = cp.E(P**2, dist)[1:]
-c2 = c_hat[1:]**2
-var = np.sum(c2*norms2)
-|\pause|
-
 samples_q = dist.sample(10**6)
 samples_u = u_hat(*samples_q)
-mean = np.mean(samples_u,1)
-var = np.var(samples_u,1)
+mean = np.mean(samples_u, 1)
+var = np.var(samples_u, 1)
 \end{lstlisting}
 \end{chaospy}
 
 
-\begin{frame}
- \frametitle{Some random variables are dependent}
- \begin{figure}
- \includegraphics[width = 0.9\textwidth]{dependent.png}
- \end{figure}
 
+% \begin{frame}
+%  \frametitle{Some random variables are dependent}
+%  \begin{figure}
+%  \includegraphics[width = 0.9\textwidth]{dependent.png}
+%  \end{figure}
+%
+%  \end{frame}
+
+
+%
+% \begin{frame}{Transformations manipulates probability distributions}
+% \begin{figure}
+%  \includegraphics[width=\textwidth]{trans2.png}
+% \end{figure}
+% \end{frame}
+
+
+
+
+
+\begin{frame}
+ \frametitle{Dependent variables break the orthogonality property of Polynomal Chaos!}
+ \scriptsize
+ \[  P_{\mathfrak i} = P_{i_1}^{(1)}P_{i_2}^{(2)}\cdots P_{i_D}^{(D)} \qquad \mathfrak i = (i_1,i_2,...,i_D)\]
+ \pause
+ \begin{align*}
+     \inner{ P_\mathfrak{i},P_\mathfrak{j}} &= E(P_\mathfrak{i},P_\mathfrak{j})\\
+  \onslide<3-> {&=\E{P_{i_1}^{(1)}\cdots P_{i_D}^{(D)}P_{j_1}^{(1)}\cdots P_{j_D}^{(D)}}}\\
+  \onslide<4-> {&=\E{P_{i_1}^{(1)}P_{j_1}^{(1)}}\cdots \E{P_{i_D}^{(D)}P_{j_D}^{(D)}}}\\
+  \onslide<5-> {&=\dots}\\
+  \onslide<5-> {&=\norm{P_{\mathfrak{i}}^{(1)}}\delta_{\mathfrak{i}\mathfrak{j}}}
+ \end{align*}
+ \onslide<6->
+\begin{alert}{But the problem is:}
+\[\E{uv} \neq \E{u}\E{v} \qquad \text{when $u$ and $v$ are
+stochastically dependent}\]
+ \end{alert}
  \end{frame}
 
 
 
-\begin{frame}{Transformations manipulates probability distributions}
-\begin{figure}
- \includegraphics[width=\textwidth]{trans2.png}
-\end{figure}
-\end{frame}
-
-
-
-\begin{frame}{Transformations can be used to model dependent
-    variables effectively as a parameterization of independent
-    variables}{}
-    \begin{align*}
-        \hat u_M(x; q)
-        \onslide<2->{= \hat u_M(x; T(r))}
-        \onslide<3->{= \sum_{n=0}^N c_n(x) P_n(r)}
-    \end{align*}
-\end{frame}
+% \begin{frame}{Transformations can be used to model dependent
+%     variables effectively as a parameterization of independent
+%     variables}{}
+%     \begin{align*}
+%         \hat u_M(x; q)
+%         \onslide<2->{= \hat u_M(x; T(r))}
+%         \onslide<3->{= \sum_{n=0}^N c_n(x) P_n(r)}
+%     \end{align*}
+% \end{frame}
 
 
  \begin{frame}
@@ -670,6 +800,17 @@ var = np.var(samples_u,1)
  \begin{figure}
  \includegraphics[width = \textwidth]{distributions.png}
  \end{figure}
+
+ \end{frame}
+
+ \begin{frame}
+ \frametitle{Chaospy is built around the Rosenblatt transformation }
+
+\begin{itemize}[<+->]
+\item Sampling of all probability distributions
+\item Quasi-Monte Carlo sampling is available for anyprobability distribution
+\item Polynomial Chaos expansions are available for any probability distribution
+\end{itemize}
 
  \end{frame}
 
@@ -737,5 +878,31 @@ var = np.var(samples_u,1)
 \end{itemize}
 
 \end{frame}
+
+\begin{frame}{Summary: Chaospy is a modular software for uncertainty quantification that lies close to the mathematical theory}
+
+\begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+    \node [align=left, xshift=0.3\textwidth,yshift=0.1\textwidth] (image1) at (current page.center)
+          {\includegraphics[width = 0.3\textwidth]{samples.png}};
+    \node[align=left] at (image1.west) {\hspace{-7cm} \bf Advanced Monte Carlo methods};
+  \end{tikzpicture}
+
+\pause
+
+\begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+    \node [align=left, xshift=0.3\textwidth,yshift=-0.15\textwidth] (image2) at (current page.center)
+          {\includegraphics[width = 0.25\textwidth]{pc.png}};
+    \node[align=left] at (image2.west) {\hspace{-7.95cm} \bf Polynomial Chaos expansions};
+  \end{tikzpicture}
+
+\pause
+\begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+
+  \node[align=left, yshift=0.1\textwidth] at (current page.south){ \bf Questions?};
+\end{tikzpicture}
+
+
+\end{frame}
+
 
 \end{document}
