@@ -98,7 +98,7 @@ columns=fixed
 
 \title{Chaospy: \\ A modular implementation of polynomial chaos expansions and Monte Carlo methods}
 \author{Simen Tennøe}
-\institute{University of Oslo, IFI\\ Simula}
+\institute{University of Oslo, CINPLA\\ Simula}
 
 \begin{document}
 
@@ -130,31 +130,100 @@ columns=fixed
 
 
 
-  \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
-    \node [align=left, xshift=-0.4\textwidth,yshift=0.1\textwidth] (image1) at (current page.center)
-          {\includegraphics[width = 0.25\textwidth]{samples.png}};
-    \node[align=left] at (image1.east) {\hspace{7cm} \bf Monte Carlo methods using Chaospy};
-  \end{tikzpicture}
 
-\pause
-    \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
-      \node [align=left, xshift=-0.2\textwidth,yshift=-0.1\textwidth] (image2) at (current page.center)
-            {\includegraphics[width = 0.25\textwidth]{pc.png}};
-      \node[align=left] at (image2.east) {\hspace{7cm} \bf Polynomial Chaos using Chaospy};
-    \end{tikzpicture}
-
-\pause
   \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
-    \node [align=left, xshift=0\textwidth,yshift=-0.3\textwidth] (image3) at (current page.center)
+    \node [align=left, xshift=-0.4\textwidth,yshift=0.1\textwidth] (image3) at (current page.center)
           {\includegraphics[width = 0.2\textwidth]{chaospy_logo.jpg}};
     \node[align=left] at (image3.east) {\hspace{5cm} \bf Properties of Chaospy};
   \end{tikzpicture}
 
 
+\pause
+    \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+      \node [align=left, xshift=-0.2\textwidth,yshift=-0.1\textwidth] (image2) at (current page.center)
+            {\includegraphics[width = 0.25\textwidth]{pc.png}};
+      \node[align=left] at (image2.east) {\hspace{7cm} \bf Polynomial Chaos and Chaospy};
+    \end{tikzpicture}
+
+\pause
+
+\begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+  \node [align=left, xshift=0\textwidth,yshift=-0.3\textwidth] (image1) at (current page.center)
+        {\includegraphics[width = 0.25\textwidth]{samples.png}};
+  \node[align=left] at (image1.east) {\hspace{4.5cm} \bf Monte Carlo methods};
+\end{tikzpicture}
+
 \end{frame}
 
 
 
+ \begin{frame}
+ \frametitle{Chaospy is a Python toolbox for uncertainty quantification}
+
+
+     Chaospy is modular with a syntax that lies close the the mathematical theory.
+
+\vspace{10mm}
+
+
+  It implements advanced Monte Carlo methods and Polynomial Chaos expansions.
+
+
+ \end{frame}
+
+
+
+\begin{frame}{Advantages and disadvantages of Chaospy}{}
+\bf \color{green} {Advantages}
+\begin{itemize}[<+->]
+\gooditem Modular
+\gooditem The syntax lies close to the mathematical theory
+\gooditem Supports both Monte Carlo and Polynomial Chaos
+\gooditem Handles dependent variables
+\end{itemize}
+\vspace{8mm}
+\bf\color{red} Disadvantages
+\begin{itemize}[<+->]
+\baditem Modular
+\baditem The syntax lies close to the mathematical theory
+\baditem Slow
+\end{itemize}
+
+\end{frame}
+
+
+
+% \begin{frame}{Transformations can be used to model dependent
+%     variables effectively as a parameterization of independent
+%     variables}{}
+%     \begin{align*}
+%         \hat u_M(x; q)
+%         \onslide<2->{= \hat u_M(x; T(r))}
+%         \onslide<3->{= \sum_{n=0}^N c_n(x) P_n(r)}
+%     \end{align*}
+% \end{frame}
+
+
+ \begin{frame}
+ \frametitle{All random variables can with aid of the Rosenblatt transformations be transformed to/from the uniform distribution}
+ \begin{figure}
+ \includegraphics[width = \textwidth]{distributions.png}
+ \end{figure}
+
+ \end{frame}
+
+ \begin{frame}
+ \frametitle{Chaospy is built around the Rosenblatt transformation which enables several usefull properties}
+
+\begin{itemize}[<+->]
+\item Sampling of all probability distributions
+\vspace{3mm}
+\item Quasi-Monte Carlo sampling is available for any probability distribution
+\vspace{3mm}
+\item Polynomial Chaos expansions are available for any probability distribution, even dependent variables
+\end{itemize}
+
+ \end{frame}
 
 
 
@@ -169,7 +238,7 @@ columns=fixed
   \begin{itemize}
     \item[$u$] The quantity of interest
     \item[$x$] Spatial location
-    \item[$a,I$] Parameters containting uncertainties
+    \item[$a,I$] Parameters containing uncertainties
   \end{itemize}
 \vspace{8 mm}
  \pause
@@ -307,7 +376,7 @@ dist_a = cp.Uniform(0, 0.1)
 dist_I = cp.Uniform(8, 10)
 dist = cp.J(dist_a, dist_I)
 |\pause|
-samples = dist.sample(size=1000)
+samples = dist.sample(size=1000, rule="R")
 |\pause|
 x = np.linspace(0, 10, 100)
 |\pause|
@@ -320,9 +389,54 @@ Var = np.var(samples_u, 0)
 
 
 
+
+
+% \begin{frame}{Sampling schemes in Chaospy}
+% \begin{center}
+% {
+%     \def\arraystretch{1.2}
+%   \begin{tabular}{llll}
+%    Key & & &  Name            \\\hline
+%      K & & &  Korobov            \\
+%      R & & &  (Pseudo-)Random   \\
+%      L & & &  Latin hypercube    \\
+%      S & & &  Sobol              \\
+%      H & & &  Halton             \\
+%      M & & &  Hammersley        \\\hline
+%      C & & &  Clenshaw Curtis   \\
+%      G & & &  Gaussian quadrature\\
+%      E & & &  Gauss-Legendre\\\hline
+%   \end{tabular}
+% }
+% \end{center}
+%
+% \end{frame}
+
+
+
+\begin{frame}{Chaospy have several variance reduction technices used when sampling a distribution}
+\begin{center}{
+\def\arraystretch{1.2}
+  \begin{tabular}{llll}
+   Key & & &  Name            \\\hline
+     R & & &  (Pseudo-)Random   \\\hline
+     \pause
+     K & & &  Korobov            \\
+     L & & &  Latin hypercube    \\
+     S & & &  Sobol              \\
+     H & & &  Halton             \\
+     M & & &  Hammersley        \\\hline
+  \end{tabular}
+}
+\end{center}
+\pause
+In addition Chaospy has suport for Antithetic variables.
+
+\end{frame}
+
+
 \begin{frame}[fragile]
- \frametitle{Chaospy offers several variance reduction technices for Monte Carlo sampling,
-             such as quasi-Monte Carlo for all probability distribution}
+ \frametitle{Chaospy have several variance reduction technices used when sampling a distribution}
  % TODO
  % compare 4 schemes: ' ', 'M', 'S', 'L'
  % remove margins
@@ -367,26 +481,6 @@ Var = np.var(samples_u, 0)
                 \normalsize
      \end{center}
  \end{columns}
-\end{frame}
-
-
-\begin{frame}{Sampling schemes in Chaospy}
-\begin{center}
-  \begin{tabular}{llll}
-   Key & & &  Name            \\\hline
-     K & & &  Korobov            \\
-     R & & &  (Pseudo-)Random   \\
-     L & & &  Latin hypercube    \\
-     S & & &  Sobol              \\
-     H & & &  Halton             \\
-     M & & &  Hammersley        \\\hline
-     C & & &  Clenshaw Curtis   \\
-     G & & &  Gaussian quadrature\\
-     E & & &  Gauss-Legendre\\\hline
-  \end{tabular}
-
-\end{center}
-
 \end{frame}
 
 
@@ -435,9 +529,10 @@ Var = np.var(samples_u, 0)
   \frametitle{The idea behind Polynomial Chaos (PC) theory is to approximate our model with a polynomial orthogonal in probability space}
   \begin{align*}
       u(x;a) & &\approx && \hat u_M(x;a) && =
-      && \sum_{n=0}^N && c_n(x)\quad && P_n(a),\quad && N &= M+1\\
-      &&  &&  &&  &&  && \text{Coefficient} && \text{Polynomial}
+      && \sum_{n=0}^N && {\color<3>{red}c_n(x)}\quad && {\color<4>{red}P_n(a)},\quad && N &= M+1\\
+      &&  &&  &&  &&  && {\color<3>{red}\text{Coefficient}} && {\color<4>{red}\text{Polynomial}}
   \end{align*}
+  \pause
   The mean and variance now have a simple form
   \begin{align*}
         \E{\hat u_M}&=c_0
@@ -480,15 +575,15 @@ Var = np.var(samples_u, 0)
 % \end{frame}
 
 
-
-\begin{frame}
- \frametitle{The computational essence of Polynomial Chaos}
-\[\hat u_M(x;q) = \sum_{n=0}^N c_n(x) P_n(q)\]
-\vspace{10mm}
-
- We need to find the orthogonal polynomials $P_n(q)$ and the coefficients $c_n(x)$.
-
-\end{frame}
+%
+% \begin{frame}
+%  \frametitle{The computational essence of Polynomial Chaos}
+% \[\hat u_M(x;q) = \sum_{n=0}^N c_n(x) P_n(q)\]
+% \vspace{10mm}
+%
+%  We need to find the orthogonal polynomials $P_n(q)$ and the coefficients $c_n(x)$.
+%
+% \end{frame}
 
 
 
@@ -568,20 +663,6 @@ print weights
 \end{chaospy}
 
 
-\begin{frame}
- \frametitle{Convergence of our model problem}
- % TODO
- % high: error formulae
-%   \begin{align*}
-%   \varepsilon_E &= \int_0^{10}|E(u) - E(\hat{u})|\,dx &
-%   \varepsilon_{Var} &= \int_0^{10}|Var(u) - Var(\hat{u})|\,dx
-%   \end{align*}
-
-\begin{figure}
-    \includegraphics[width=1\textwidth]{MC-PC_convergence_2D.png}
-  \end{figure}
-
- \end{frame}
 
 
 
@@ -615,22 +696,40 @@ var = cp.Var(u_hat, dist)
 
 
 \begin{frame}{Different problems require different quadrature rules}{}
-\begin{tabular}{|ll|l|}
-\hline
+    {
+        \def\arraystretch{1.2}
+\begin{tabular}{ll|l}
  Key & & Description\\\hline
     "Gaussian"& "G" &    Optimal Gaussian quadrature.\\
     "Legendre"& "E" &    Gauss-Legendre quadrature\\
     "Clenshaw"& "C" &    Clenshaw-Curtis quadrature.\\
     "Leja"& ``J" &          Leja quadrature.\\
     "Genz"& "Z" &        Hermite Genz-Keizter 16 rule.\\
-    "Patterson" & "P"&    Gauss-Patterson quadrature rule.\\\hline
+    "Patterson" & "P"&    Gauss-Patterson quadrature rule.\\
 \end{tabular}
+}
 \end{frame}
+
+
+\begin{frame}
+ \frametitle{Convergence of our model problem}
+ % TODO
+ % high: error formulae
+%   \begin{align*}
+%   \varepsilon_E &= \int_0^{10}|E(u) - E(\hat{u})|\,dx &
+%   \varepsilon_{Var} &= \int_0^{10}|Var(u) - Var(\hat{u})|\,dx
+%   \end{align*}
+
+\begin{figure}
+    \includegraphics[width=1\textwidth]{MC-PC_convergence_2D.png}
+  \end{figure}
+
+ \end{frame}
 
 
 
  \begin{frame}
-  \frametitle{The point collocation method is alternative to the
+  \frametitle{The point collocation method is an alternative to the
   pseudo-spectral method}
 
 \begin{enumerate}[<+->]
@@ -638,12 +737,15 @@ var = cp.Var(u_hat, dist)
 \begin{enumerate}[<+->]
 \item Determine polynomial approximation of model by least squares
 minimization in a space weighted with the probability distribution
+\vspace{1mm}
 \item Approximate integrals in $c_n$ by quadrature rules
 \end{enumerate}
+\vspace{5mm}
 \item Point collocation method:
 \begin{enumerate}[<+->]
 \item Determine polynomial approximation of model by least squares
 minimization in a vector space as in regression (or overdetermined matrix systems)
+\vspace{1mm}
 \item Need to choose a set of nodes (regression points)
 \end{enumerate}
 \end{enumerate}
@@ -762,57 +864,29 @@ var = np.var(samples_u, 1)
 
 
 
-
-\begin{frame}
- \frametitle{Dependent variables break the orthogonality property of Polynomal Chaos!}
- \scriptsize
- \[  P_{\mathfrak i} = P_{i_1}^{(1)}P_{i_2}^{(2)}\cdots P_{i_D}^{(D)} \qquad \mathfrak i = (i_1,i_2,...,i_D)\]
- \pause
- \begin{align*}
-     \inner{ P_\mathfrak{i},P_\mathfrak{j}} &= E(P_\mathfrak{i},P_\mathfrak{j})\\
-  \onslide<3-> {&=\E{P_{i_1}^{(1)}\cdots P_{i_D}^{(D)}P_{j_1}^{(1)}\cdots P_{j_D}^{(D)}}}\\
-  \onslide<4-> {&=\E{P_{i_1}^{(1)}P_{j_1}^{(1)}}\cdots \E{P_{i_D}^{(D)}P_{j_D}^{(D)}}}\\
-  \onslide<5-> {&=\dots}\\
-  \onslide<5-> {&=\norm{P_{\mathfrak{i}}^{(1)}}\delta_{\mathfrak{i}\mathfrak{j}}}
- \end{align*}
- \onslide<6->
-\begin{alert}{But the problem is:}
-\[\E{uv} \neq \E{u}\E{v} \qquad \text{when $u$ and $v$ are
-stochastically dependent}\]
- \end{alert}
- \end{frame}
-
-
-
-% \begin{frame}{Transformations can be used to model dependent
-%     variables effectively as a parameterization of independent
-%     variables}{}
-%     \begin{align*}
-%         \hat u_M(x; q)
-%         \onslide<2->{= \hat u_M(x; T(r))}
-%         \onslide<3->{= \sum_{n=0}^N c_n(x) P_n(r)}
-%     \end{align*}
-% \end{frame}
+%
+% \begin{frame}
+%  \frametitle{Dependent variables break the orthogonality property of Polynomal Chaos!}
+%  \scriptsize
+%  \[  P_{\mathfrak i} = P_{i_1}^{(1)}P_{i_2}^{(2)}\cdots P_{i_D}^{(D)} \qquad \mathfrak i = (i_1,i_2,...,i_D)\]
+%  \pause
+%  \begin{align*}
+%      \inner{ P_\mathfrak{i},P_\mathfrak{j}} &= E(P_\mathfrak{i},P_\mathfrak{j})\\
+%   \onslide<3-> {&=\E{P_{i_1}^{(1)}\cdots P_{i_D}^{(D)}P_{j_1}^{(1)}\cdots P_{j_D}^{(D)}}}\\
+%   \onslide<4-> {&=\E{P_{i_1}^{(1)}P_{j_1}^{(1)}}\cdots \E{P_{i_D}^{(D)}P_{j_D}^{(D)}}}\\
+%   \onslide<5-> {&=\dots}\\
+%   \onslide<5-> {&=\norm{P_{\mathfrak{i}}^{(1)}}\delta_{\mathfrak{i}\mathfrak{j}}}
+%  \end{align*}
+%  \onslide<6->
+% \begin{alert}{But the problem is:}
+% \[\E{uv} \neq \E{u}\E{v} \qquad \text{when $u$ and $v$ are
+% stochastically dependent}\]
+%  \end{alert}
+%  \end{frame}
 
 
- \begin{frame}
- \frametitle{All random variables can with aid of the Rosenblatt transformations be transformed to/from the uniform distribution}
- \begin{figure}
- \includegraphics[width = \textwidth]{distributions.png}
- \end{figure}
 
- \end{frame}
 
- \begin{frame}
- \frametitle{Chaospy is built around the Rosenblatt transformation }
-
-\begin{itemize}[<+->]
-\item Sampling of all probability distributions
-\item Quasi-Monte Carlo sampling is available for anyprobability distribution
-\item Polynomial Chaos expansions are available for any probability distribution
-\end{itemize}
-
- \end{frame}
 
 
 %  \begin{chaospy}{Point collocation with Rosenblatt transformation}
@@ -863,23 +937,7 @@ stochastically dependent}\]
 
 
 
-\begin{frame}{Advantages and disadvantages of chaospy}{}
-\bf \color{green} {Advantages}
-\begin{itemize}[<+->]
-\gooditem Modular
-\gooditem Supports both Monte Carlo and Polynomial Chaos
-\gooditem Handles dependent variables
-\end{itemize}
-
-\bf\color{red} Disadvantages
-\begin{itemize}[<+->]
-\baditem Modular
-\baditem Slow
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Summary: Chaospy is a modular software for uncertainty quantification that lies close to the mathematical theory}
+\begin{frame}{Summary: Chaospy is a modular software for uncertainty quantification with syntax that lies close to the mathematical theory}
 
 \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
     \node [align=left, xshift=0.3\textwidth,yshift=0.1\textwidth] (image1) at (current page.center)
@@ -887,7 +945,6 @@ stochastically dependent}\]
     \node[align=left] at (image1.west) {\hspace{-7cm} \bf Advanced Monte Carlo methods};
   \end{tikzpicture}
 
-\pause
 
 \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
     \node [align=left, xshift=0.3\textwidth,yshift=-0.15\textwidth] (image2) at (current page.center)
