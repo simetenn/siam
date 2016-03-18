@@ -1,5 +1,5 @@
-\documentclass[handout]{beamer}
-% \documentclass[presentation]{beamer}
+%\documentclass[handout]{beamer}
+\documentclass[presentation]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, pdfpages, pdflscape, lscape, color, listings, hyperref, amssymb, graphicx,textcomp,varioref, afterpage, subcaption, float, bm, tikz}
 
@@ -98,7 +98,7 @@ columns=fixed
 
 \title{Chaospy: \\ A modular implementation of polynomial chaos expansions and Monte Carlo methods}
 \author{Simen Tennøe}
-\institute{University of Oslo, CINPLA\\ Simula}
+\institute{University of Oslo, CINPLA}
 
 \begin{document}
 
@@ -139,19 +139,19 @@ columns=fixed
 
 
 \pause
-    \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
-      \node [align=left, xshift=-0.2\textwidth,yshift=-0.1\textwidth] (image2) at (current page.center)
-            {\includegraphics[width = 0.25\textwidth]{pc.png}};
-      \node[align=left] at (image2.east) {\hspace{7cm} \bf Polynomial Chaos and Chaospy};
-    \end{tikzpicture}
-
-\pause
 
 \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
-  \node [align=left, xshift=0\textwidth,yshift=-0.3\textwidth] (image1) at (current page.center)
-        {\includegraphics[width = 0.25\textwidth]{samples.png}};
-  \node[align=left] at (image1.east) {\hspace{4.5cm} \bf Monte Carlo methods};
+\node [align=left, xshift=-0.2\textwidth,yshift=-0.1\textwidth] (image1) at (current page.center)
+    {\includegraphics[width = 0.25\textwidth]{samples.png}};
+\node[align=left] at (image1.east) {\hspace{6.5cm} \bf Monte Carlo methods and Chaospy};
 \end{tikzpicture}
+\pause
+
+    \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+      \node [align=left, xshift=0\textwidth,yshift=-0.3\textwidth] (image2) at (current page.center)
+            {\includegraphics[width = 0.25\textwidth]{pc.png}};
+      \node[align=left] at (image2.east) {\hspace{4cm} \bf Polynomial Chaos};
+    \end{tikzpicture}
 
 \end{frame}
 
@@ -160,24 +160,82 @@ columns=fixed
  \begin{frame}
  \frametitle{Chaospy is a Python toolbox for uncertainty quantification}
 
+%\vspace{-5mm}
+ Chaospy implements advanced Monte Carlo methods and Polynomial Chaos expansions.
 
-     Chaospy is modular with a syntax that lies close the the mathematical theory.
+ \begin{columns}
+      \column{.5\textwidth}
+      \begin{center}
+                 \includegraphics[width=0.5\textwidth]{samples.png}
+      \end{center}
+      \column{.5\textwidth}
+      \begin{center}
+                   \includegraphics[width=0.5\textwidth]{pc.png}
+      \end{center}
+  \end{columns}
 
-\vspace{10mm}
+  \vspace{5mm}
+\pause
+Chaospy is modular with a programming syntax that lies close the the mathematical theory.
 
+\begin{columns}
+     \column{.5\textwidth}
+     \begin{center}
+                \includegraphics[width=0.5\textwidth]{lego.jpg}
+     \end{center}
+     \column{.5\textwidth}
+     \begin{center}
 
-  It implements advanced Monte Carlo methods and Polynomial Chaos expansions.
+  \lstinline|dist = chaospy.Uniform(0, 0.1)|
 
+    \end{center}
+
+ \end{columns}
 
  \end{frame}
 
+
+% \begin{frame}
+%  \frametitle{Chaospy implements advanced Monte Carlo methods and Polynomial Chaos expansions.}
+%
+%  \begin{columns}
+%       \column{.5\textwidth}
+%       \begin{center}
+%                  \includegraphics[width=1\textwidth]{samples.png}
+%       \end{center}
+%       \column{.5\textwidth}
+%       \begin{center}
+%                    \includegraphics[width=1\textwidth]{pc.png}
+%       \end{center}
+%   \end{columns}
+%
+%  \end{frame}
+%
+%
+% \begin{frame}
+%   \frametitle{Chaospy is modular with a syntax that lies close the the mathematical theory.}
+%
+%   \begin{columns}
+%        \column{.5\textwidth}
+%        \begin{center}
+%                   \includegraphics[width=1\textwidth]{lego.jpg}
+%        \end{center}
+%        \column{.5\textwidth}
+%        \begin{center}
+%
+%     \lstinline|dist = chaospy.Uniform(0, 0.1)|
+%
+%       \end{center}
+%
+%    \end{columns}
+% \end{frame}
 
 
 \begin{frame}{Advantages and disadvantages of Chaospy}{}
 \bf \color{green} {Advantages}
 \begin{itemize}[<+->]
 \gooditem Modular
-\gooditem The syntax lies close to the mathematical theory
+\gooditem The programming syntax lies close to the mathematical theory
 \gooditem Supports both Monte Carlo and Polynomial Chaos
 \gooditem Handles dependent variables
 \end{itemize}
@@ -414,25 +472,25 @@ Var = np.var(samples_u, 0)
 
 
 
-\begin{frame}{Chaospy have several variance reduction technices used when sampling a distribution}
-\begin{center}{
-\def\arraystretch{1.2}
-  \begin{tabular}{llll}
-   Key & & &  Name            \\\hline
-     R & & &  (Pseudo-)Random   \\\hline
-     \pause
-     K & & &  Korobov            \\
-     L & & &  Latin hypercube    \\
-     S & & &  Sobol              \\
-     H & & &  Halton             \\
-     M & & &  Hammersley        \\\hline
-  \end{tabular}
-}
-\end{center}
-\pause
-In addition Chaospy has suport for Antithetic variables.
-
-\end{frame}
+% \begin{frame}{Chaospy have several variance reduction technices used when sampling a distribution}
+% \begin{center}{
+% \def\arraystretch{1.2}
+%   \begin{tabular}{llll}
+%    Key & & &  Name            \\\hline
+%      R & & &  (Pseudo-)Random   \\\hline
+%      \pause
+%      K & & &  Korobov            \\
+%      L & & &  Latin hypercube    \\
+%      S & & &  Sobol              \\
+%      H & & &  Halton             \\
+%      M & & &  Hammersley        \\\hline
+%   \end{tabular}
+% }
+% \end{center}
+% \pause
+% In addition Chaospy has support for Antithetic variables.
+%
+% \end{frame}
 
 
 \begin{frame}[fragile]
@@ -440,15 +498,16 @@ In addition Chaospy has suport for Antithetic variables.
  % TODO
  % compare 4 schemes: ' ', 'M', 'S', 'L'
  % remove margins
+ \vspace{-2mm}
  \begin{columns}
      \column{.5\textwidth}
      \begin{center}
-                \includegraphics[width=0.65\textwidth]{samples.png}
+                \includegraphics[width=0.65\textwidth]{samples_H.png}
 
-                (Pseudo-)Random sampling:
+                Hammersley sampling:
 
                 \scriptsize
-                \verb;nodes = dist.sample(100);
+                \verb;nodes = dist.sample(100, "M");
                 \normalsize
 
                 \includegraphics[width=0.65\textwidth]{samples_H.png}
@@ -614,8 +673,8 @@ In addition Chaospy has suport for Antithetic variables.
 
 \begin{chaospy}{The only numerically stable method for calculating orthogonal polynomials is through the three-term discretized Stiltjes recursion}
 \begin{lstlisting}[language=python]
-dist_a = cp.Normal()
-P = cp.orth_ttr(3, dist_a)
+dist = cp.Normal()
+P = cp.orth_ttr(3, dist)
 
 print P
 [1.0, q0, q0^2-1.0, q0^3-3.0q0]
@@ -643,7 +702,8 @@ $q_k$ quadrature nodes, $\omega_k$ quadrature weights
 
 
 
-\begin{chaospy}{Generating nodes and weights in Chaospy}
+\begin{chaospy}{
+  Generating nodes and weights in Chaospy}
      % TODO
      % high: add code for 1-D gen_quad
      % high: list quadrature schemes
@@ -695,22 +755,6 @@ var = cp.Var(u_hat, dist)
 \end{chaospy}
 
 
-\begin{frame}{Different problems require different quadrature rules}{}
-    {
-        \def\arraystretch{1.2}
-\begin{tabular}{ll|l}
- Key & & Description\\\hline
-    "Gaussian"& "G" &    Optimal Gaussian quadrature.\\
-    "Legendre"& "E" &    Gauss-Legendre quadrature\\
-    "Clenshaw"& "C" &    Clenshaw-Curtis quadrature.\\
-    "Leja"& ``J" &          Leja quadrature.\\
-    "Genz"& "Z" &        Hermite Genz-Keizter 16 rule.\\
-    "Patterson" & "P"&    Gauss-Patterson quadrature rule.\\
-\end{tabular}
-}
-\end{frame}
-
-
 \begin{frame}
  \frametitle{Convergence of our model problem}
  % TODO
@@ -725,6 +769,25 @@ var = cp.Var(u_hat, dist)
   \end{figure}
 
  \end{frame}
+
+
+
+
+ \begin{frame}{Different problems require different quadrature rules}{}
+     {
+         \def\arraystretch{1.2}
+ \begin{tabular}{ll|l}
+  Key & & Description\\\hline
+     "Gaussian"& "G" &    Optimal Gaussian quadrature.\\
+     "Legendre"& "E" &    Gauss-Legendre quadrature\\
+     "Clenshaw"& "C" &    Clenshaw-Curtis quadrature.\\
+     "Leja"& ``J" &          Leja quadrature.\\
+     "Genz"& "Z" &        Hermite Genz-Keizter 16 rule.\\
+     "Patterson" & "P"&    Gauss-Patterson quadrature rule.\\
+ \end{tabular}
+ }
+ \end{frame}
+
 
 
 
@@ -767,9 +830,11 @@ dist = cp.J(dist_a, dist_I)
 |\pause|
 x = np.linspace(0, 10, 100)
  |\pause|
-P = cp.orth_ttr(3, dist) |\pause|
+P = cp.orth_ttr(3, dist)
+ |\pause|
 nodes = dist.sample(2*len(P)) |\pause|
 samples_u = [u(x, *node) for node in nodes.T] |\pause|
+
 u_hat = cp.fit_regression(P, nodes, samples_u)
  \end{lstlisting}
 
@@ -832,12 +897,9 @@ u_hat = cp.fit_regression(P, nodes, samples_u)
  \begin{lstlisting}[language=python]
 u_hat = cp.fit_quadrature(P, nodes, weights, solves)
 |\pause|
-mean =  cp.E(u_hat, dist)
-var = cp.Var(u_hat, dist)
-|\pause|
-
 samples_q = dist.sample(10**6)
 samples_u = u_hat(*samples_q)
+|\pause|
 mean = np.mean(samples_u, 1)
 var = np.var(samples_u, 1)
 \end{lstlisting}
@@ -951,6 +1013,16 @@ var = np.var(samples_u, 1)
           {\includegraphics[width = 0.25\textwidth]{pc.png}};
     \node[align=left] at (image2.west) {\hspace{-7.95cm} \bf Polynomial Chaos expansions};
   \end{tikzpicture}
+
+  \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+      \node [align=left, xshift=0.49\textwidth,yshift=-0.37\textwidth] (image2) at (current page.center)
+            {\includegraphics[width = 0.35\textwidth]{cinpla.png}};
+    \end{tikzpicture}
+
+    \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+        \node [align=left, xshift=-0.45\textwidth,yshift=-0.37\textwidth] (image2) at (current page.center)
+              {\includegraphics[width = 0.18\textwidth]{chaospy_logo.jpg}};
+      \end{tikzpicture}
 
 \pause
 \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
