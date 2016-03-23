@@ -1,5 +1,5 @@
-%\documentclass[handout]{beamer}
-\documentclass[presentation]{beamer}
+\documentclass[handout]{beamer}
+%\documentclass[presentation]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, pdfpages, pdflscape, lscape, color, listings, hyperref, amssymb, graphicx,textcomp,varioref, afterpage, subcaption, float, bm, tikz}
 
@@ -126,32 +126,35 @@ columns=fixed
 
 
 
-\begin{frame}[fragile]{This presentation focuses on Chaospy, a Python toolbox for uncertainty quantification, developed by Jonathan Feinberg}
+\begin{frame}[fragile]{This presentation focuses on Chaospy, a Python toolbox for uncertainty quantification}
 
 
 
 
   \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
-    \node [align=left, xshift=-0.4\textwidth,yshift=0.1\textwidth] (image3) at (current page.center)
-          {\includegraphics[width = 0.2\textwidth]{chaospy_logo.jpg}};
-    \node[align=left] at (image3.east) {\hspace{5cm} \bf Properties of Chaospy};
+  \node [align=left, xshift=-0.4\textwidth,yshift=0.1\textwidth] (image1) at (current page.center)
+      {\includegraphics[width = 0.25\textwidth]{samples.png}};
+  \node[align=left] at (image1.east) {\hspace{4.5cm} \bf Monte Carlo methods};
   \end{tikzpicture}
 
-
 \pause
 
-\begin{tikzpicture}[remember picture, overlay, font=\sffamily]
-\node [align=left, xshift=-0.2\textwidth,yshift=-0.1\textwidth] (image1) at (current page.center)
-    {\includegraphics[width = 0.25\textwidth]{samples.png}};
-\node[align=left] at (image1.east) {\hspace{6.5cm} \bf Monte Carlo methods and Chaospy};
-\end{tikzpicture}
-\pause
 
     \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
-      \node [align=left, xshift=0\textwidth,yshift=-0.3\textwidth] (image2) at (current page.center)
+      \node [align=left, xshift=-0.2\textwidth,yshift=-0.1\textwidth] (image2) at (current page.center)
             {\includegraphics[width = 0.25\textwidth]{pc.png}};
       \node[align=left] at (image2.east) {\hspace{4cm} \bf Polynomial Chaos};
     \end{tikzpicture}
+
+
+    \pause
+
+      \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+        \node [align=left, xshift=0\textwidth,yshift=-0.3\textwidth] (image3) at (current page.center)
+              {\includegraphics[width = 0.2\textwidth]{chaospy_logo.jpg}};
+        \node[align=left] at (image3.east) {\hspace{5cm} \bf Properties of Chaospy};
+      \end{tikzpicture}
+
 
 \end{frame}
 
@@ -231,24 +234,6 @@ Chaospy is modular with a programming syntax that lies close the the mathematica
 % \end{frame}
 
 
-\begin{frame}{Advantages and disadvantages of Chaospy}{}
-\bf \color{green} {Advantages}
-\begin{itemize}[<+->]
-\gooditem Modular
-\gooditem The programming syntax lies close to the mathematical theory
-\gooditem Supports both Monte Carlo and Polynomial Chaos
-\gooditem Handles dependent variables
-\end{itemize}
-\vspace{8mm}
-\bf\color{red} Disadvantages
-\begin{itemize}[<+->]
-\baditem Modular
-\baditem The syntax lies close to the mathematical theory
-\baditem Slow
-\end{itemize}
-
-\end{frame}
-
 
 
 % \begin{frame}{Transformations can be used to model dependent
@@ -261,27 +246,6 @@ Chaospy is modular with a programming syntax that lies close the the mathematica
 %     \end{align*}
 % \end{frame}
 
-
- \begin{frame}
- \frametitle{All random variables can with aid of the Rosenblatt transformations be transformed to/from the uniform distribution}
- \begin{figure}
- \includegraphics[width = \textwidth]{distributions.png}
- \end{figure}
-
- \end{frame}
-
- \begin{frame}
- \frametitle{Chaospy is built around the Rosenblatt transformation which enables several usefull properties}
-
-\begin{itemize}[<+->]
-\item Sampling of all probability distributions
-\vspace{3mm}
-\item Quasi-Monte Carlo sampling is available for any probability distribution
-\vspace{3mm}
-\item Polynomial Chaos expansions are available for any probability distribution, even dependent variables
-\end{itemize}
-
- \end{frame}
 
 
 
@@ -298,12 +262,17 @@ Chaospy is modular with a programming syntax that lies close the the mathematica
     \item[$x$] Spatial location
     \item[$a,I$] Parameters containing uncertainties
   \end{itemize}
-\vspace{8 mm}
+
+\vspace{-5 mm}
  \pause
-Initially assume model parameters:
+%Initially assume model parameters:
 \begin{align*}
 a &\sim \text{Uniform(0, 0.1)} & I& \sim \text{Uniform(8, 10)}
 \end{align*}
+\pause
+\vspace{5 mm}
+Analytical solution
+\[u(x; a, I) = Ie^{-ax}\]
 
 \pause
 \vspace{5mm}
@@ -434,7 +403,7 @@ dist_a = cp.Uniform(0, 0.1)
 dist_I = cp.Uniform(8, 10)
 dist = cp.J(dist_a, dist_I)
 |\pause|
-samples = dist.sample(size=1000, rule="R")
+samples = dist.sample(size=1000)
 |\pause|
 x = np.linspace(0, 10, 100)
 |\pause|
@@ -446,7 +415,16 @@ Var = np.var(samples_u, 0)
 \end{chaospy}
 
 
-
+\begin{frame}
+  \frametitle{Convergence of Monte Carlo is slow}
+  % \begin{align*}
+  %     \varepsilon_E &= \int_0^{10}|\E{u} - \E{\hat{u}}|\,dx &
+  %     \varepsilon_{Var} &= \int_0^{10}|\Var{u} - \Var{\hat{u}}|\,dx
+  % \end{align*}
+  \begin{center}
+    \includegraphics[width=1\textwidth]{MC_convergence_2D.png}
+  \end{center}
+\end{frame}
 
 
 % \begin{frame}{Sampling schemes in Chaospy}
@@ -544,6 +522,32 @@ Var = np.var(samples_u, 0)
 
 
 
+\begin{chaospy}{Quasi-Monte Carlo with Latin Hypercube sampling}
+    \scriptsize
+\begin{lstlisting}[language=python]
+import chaospy as cp
+import numpy as np
+
+def u(x, a, I):
+    return I*np.exp(-a*x)
+
+
+dist_a = cp.Uniform(0, 0.1)
+dist_I = cp.Uniform(8, 10)
+dist = cp.J(dist_a, dist_I)
+
+samples = dist.sample(size=1000, |\color{red}{rule="L"}|)
+|\pause|
+x = np.linspace(0, 10, 100)
+
+samples_u = [u(x, a, I) for a, I in samples]
+
+E = np.mean(samples_u, 0)
+Var = np.var(samples_u, 0)
+\end{lstlisting}
+\end{chaospy}
+
+
 % \begin{frame}
 %   \frametitle{Convergence of Monte Carlo is slow}
 %   \begin{align*}
@@ -556,15 +560,38 @@ Var = np.var(samples_u, 0)
 % \end{frame}
 
 \begin{frame}
-  \frametitle{Convergence of Monte Carlo is slow}
+  \frametitle{Convergence of quasi-Monte Carlo is better than Monte Carlo, but still slow}
   % \begin{align*}
   %     \varepsilon_E &= \int_0^{10}|\E{u} - \E{\hat{u}}|\,dx &
   %     \varepsilon_{Var} &= \int_0^{10}|\Var{u} - \Var{\hat{u}}|\,dx
   % \end{align*}
   \begin{center}
-    \includegraphics[width=1\textwidth]{MC_convergence_2D.png}
+    \includegraphics[width=1\textwidth]{qMC-MC_convergence_2D.png}
   \end{center}
 \end{frame}
+
+
+
+ \begin{frame}
+ \frametitle{All random variables can with aid of the Rosenblatt transformations be transformed to/from the uniform distribution}
+ \begin{figure}
+ \includegraphics[width = \textwidth]{distributions.png}
+ \end{figure}
+
+ \end{frame}
+
+ \begin{frame}
+ \frametitle{Chaospy is built around the Rosenblatt transformation which enables several usefull properties}
+
+\begin{itemize}[<+->]
+\item Sampling of all probability distributions
+\vspace{3mm}
+\item Quasi-Monte Carlo sampling is available for any probability distribution
+% \vspace{3mm}
+% \item Polynomial Chaos expansions are available for any probability distribution, even dependent variables
+\end{itemize}
+
+ \end{frame}
 
 
 % \begin{frame}[fragile]{Using Lagrange polynomials to approximate $u(q)$ ($N$-th degree polynomial interpolation)}{}
@@ -587,20 +614,28 @@ Var = np.var(samples_u, 0)
 \begin{frame}
   \frametitle{The idea behind Polynomial Chaos (PC) theory is to approximate our model with a polynomial orthogonal in probability space}
   \begin{align*}
-      u(x;a) & &\approx && \hat u_M(x;a) && =
-      && \sum_{n=0}^N && {\color<3>{red}c_n(x)}\quad && {\color<4>{red}P_n(a)},\quad && N &= M+1\\
+      u(x; q) & &\approx && \hat u_M(x;q) && =
+      && \sum_{n=0}^N && {\color<3>{red}c_n(x)}\quad && {\color<4>{red}P_n(q)}\\
       &&  &&  &&  &&  && {\color<3>{red}\text{Coefficient}} && {\color<4>{red}\text{Polynomial}}
   \end{align*}
-  \pause
-  The mean and variance now have a simple form
-  \begin{align*}
-        \E{\hat u_M}&=c_0
-        &
-        \Var{\hat u_M}&=\sum_{n=1}^N c_n^2\norm{P_n}
-    \end{align*}
 
+\hspace{10.5mm} $q$ are the uncertain variables
+  \begin{align*}
+      N = \frac{(M + D)!}{M!D!} - 1, \quad D\text{ is the number of dimensions}\\
+  \end{align*}
+
+Mean and variance are calculated from $\hat u_M(x;q)$
 \end{frame}
 
+
+% \begin{frame}
+%     \frametitle{The mean and variance now have a simple form}
+%     \begin{align*}
+%           \E{\hat u_M}&=c_0
+%           &
+%           \Var{\hat u_M}&=\sum_{n=1}^N c_n^2\E{P_n^2}
+%       \end{align*}
+% \end{frame}
 
 % \begin{frame}{The mean and variance now have a simple form}{}
 %     \begin{alert}{Assumption:}
@@ -682,23 +717,54 @@ print P
 \end{chaospy}
 
 
+\begin{frame}{Least squares minimization leads to a formula for $c_n$, named the \emph{pseudo-spectral method}}
+\vspace{-10mm}
+    \begin{align*}
+        \onslide<1->{ &\min_{c_0,\ldots,c_N} || u- \hat u_M||_Q^2 & \quad\text{where Q is a random vector, i.e. $(a, I )$}\\
+          &\qquad\vdots\quad&\\}
+        \onslide<2>{&c_n = \coef{u}{P_n} & \quad\text{Fourier coefficients}\\}
+        \onslide<3>{&c_n = \int \quad ... \quad dq &\\}
+    \end{align*}
+    The integrals in $c_n$ are approximated by quadrature rules where the probability distribution is used as a weight function.
 
-\begin{frame}
- \frametitle{Least squares minimization leads to a formula for $c_n$, named the \emph{pseudo-spectral method}}
-
- \begin{align*}
-     c_n(x) &= \frac{\inner{ u,P_n}}{\norm{P_n}^2}
-     \onslide<2->{=\frac{\E{uP_n}}{\E{P_n^2}}} \\
-     \onslide<3-> {&=\frac{1}{\E{P_n^2}} \int u(x;q)P_n(q)f_Q(q)dq}
-\onslide<4-> {\approx\\
-\hat{c}_n(x) &= \frac{1}{\E{P_n^2}} \sum_{k=0}^K
-P_n(q_k)u(x;q_k)f(q_k)\omega_k}
-\end{align*}
-
-\onslide<3->
-$q_k$ quadrature nodes, $\omega_k$ quadrature weights
-
+    % The integrals in $c_n$ are approximated by quadrature rules, which are
+    % optimal if we have a weight function. It turns out that all probability
+    % distribution qualify as weight functions.
 \end{frame}
+
+% \begin{frame}{Coefficients can be calculated using the numerical integration Guassian Quadrature}{}
+%     \begin{align*}
+%         \onslide<1->{ \min_{c_0,\ldots,c_N} || u- \hat u_M||_Q^2&\\
+%           \vdots\qquad&\\}
+%         \onslide<2>{c_n = \coef{u}{P_n} & \qquad\text{Fourier coefficients}}
+%     \end{align*}
+%     where Q is a random vector, i.e. $(a, I )$
+%
+%     \vspace{5mm}
+%
+%     Quadrature methods are optimal if we have a weight function, it turns out
+%     that all probability distribution qualify as  weight functions.
+%
+%     The numerical integral approximation is named pseudo-spectral method.
+% \end{frame}
+
+%
+% \begin{frame}
+%  \frametitle{Least squares minimization leads to a formula for $c_n$, named the \emph{pseudo-spectral method}}
+%
+%  \begin{align*}
+%      c_n(x) &= \frac{\inner{ u,P_n}}{\norm{P_n}^2}
+%      \onslide<2->{=\frac{\E{uP_n}}{\E{P_n^2}}} \\
+%      \onslide<3-> {&=\frac{1}{\E{P_n^2}} \int u(x;q)P_n(q)f_Q(q)dq}
+% \onslide<4-> {\approx\\
+% \hat{c}_n(x) &= \frac{1}{\E{P_n^2}} \sum_{k=0}^K
+% P_n(q_k)u(x;q_k)f(q_k)\omega_k}
+% \end{align*}
+%
+% \onslide<3->
+% $q_k$ quadrature nodes, $\omega_k$ quadrature weights
+%
+% \end{frame}
 
 
 
@@ -726,7 +792,7 @@ print weights
 
 
 
-\begin{chaospy}{A full implementation of pseudo-spectral projection
+\begin{chaospy}{A full implementation with the pseudo-spectral method
     in Chaospy}
     \scriptsize
     % TODO
@@ -749,7 +815,7 @@ samples_u = [u(x, *node) for node in nodes.T]
 u_hat = cp.fit_quadrature(P, nodes, weights, samples_u
                           rule="Gaussian")
 |\pause|
-mean, cp.E(u_hat, dist)
+mean, = cp.E(u_hat, dist)
 var = cp.Var(u_hat, dist)
 \end{lstlisting}
 \end{chaospy}
@@ -765,7 +831,7 @@ var = cp.Var(u_hat, dist)
 %   \end{align*}
 
 \begin{figure}
-    \includegraphics[width=1\textwidth]{MC-PC_convergence_2D.png}
+    \includegraphics[width=1\textwidth]{qMC-MC-PC_convergence_2D.png}
   \end{figure}
 
  \end{frame}
@@ -791,54 +857,54 @@ var = cp.Var(u_hat, dist)
 
 
 
- \begin{frame}
-  \frametitle{The point collocation method is an alternative to the
-  pseudo-spectral method}
-
-\begin{enumerate}[<+->]
-\item Psuedo-spectral method:
-\begin{enumerate}[<+->]
-\item Determine polynomial approximation of model by least squares
-minimization in a space weighted with the probability distribution
-\vspace{1mm}
-\item Approximate integrals in $c_n$ by quadrature rules
-\end{enumerate}
-\vspace{5mm}
-\item Point collocation method:
-\begin{enumerate}[<+->]
-\item Determine polynomial approximation of model by least squares
-minimization in a vector space as in regression (or overdetermined matrix systems)
-\vspace{1mm}
-\item Need to choose a set of nodes (regression points)
-\end{enumerate}
-\end{enumerate}
-\end{frame}
-
-
-
-\begin{chaospy}{Code for point collocation}
-    % TODO
-    % remove "H" and rule="LS" and simulate again again.
-    \scriptsize
- \begin{lstlisting}[language=python]
-def u(x, a, I):
-  return I*np.exp(-a*x)
- |\pause|
-dist_a = cp.Uniform(0, 0.1)
-dist_I = cp.Uniform(8, 10)
-dist = cp.J(dist_a, dist_I)
-|\pause|
-x = np.linspace(0, 10, 100)
- |\pause|
-P = cp.orth_ttr(3, dist)
- |\pause|
-nodes = dist.sample(2*len(P)) |\pause|
-samples_u = [u(x, *node) for node in nodes.T] |\pause|
-
-u_hat = cp.fit_regression(P, nodes, samples_u)
- \end{lstlisting}
-
-\end{chaospy}
+%  \begin{frame}
+%   \frametitle{The point collocation method is an alternative to the
+%   pseudo-spectral method}
+%
+% \begin{enumerate}[<+->]
+% \item Psuedo-spectral method:
+% \begin{enumerate}[<+->]
+% \item Determine polynomial approximation of model by least squares
+% minimization in a space weighted with the probability distribution
+% \vspace{1mm}
+% \item Approximate integrals in $c_n$ by quadrature rules
+% \end{enumerate}
+% \vspace{5mm}
+% \item Point collocation method:
+% \begin{enumerate}[<+->]
+% \item Determine polynomial approximation of model by least squares
+% minimization in a vector space as in regression (or overdetermined matrix systems)
+% \vspace{1mm}
+% \item Need to choose a set of nodes (regression points)
+% \end{enumerate}
+% \end{enumerate}
+% \end{frame}
+%
+%
+%
+% \begin{chaospy}{Code for point collocation}
+%     % TODO
+%     % remove "H" and rule="LS" and simulate again again.
+%     \scriptsize
+%  \begin{lstlisting}[language=python]
+% def u(x, a, I):
+%   return I*np.exp(-a*x)
+%  |\pause|
+% dist_a = cp.Uniform(0, 0.1)
+% dist_I = cp.Uniform(8, 10)
+% dist = cp.J(dist_a, dist_I)
+% |\pause|
+% x = np.linspace(0, 10, 100)
+%  |\pause|
+% P = cp.orth_ttr(3, dist)
+%  |\pause|
+% nodes = dist.sample(2*len(P)) |\pause|
+% samples_u = [u(x, *node) for node in nodes.T] |\pause|
+%
+% u_hat = cp.fit_regression(P, nodes, samples_u)
+%  \end{lstlisting}
+%
+% \end{chaospy}
 
 
 
@@ -852,19 +918,19 @@ u_hat = cp.fit_regression(P, nodes, samples_u)
 % \end{frame}
 
 
-\begin{frame}{Which method to choose for your problem depends on the problem}{}
-    \scriptsize
-    \begin{tabular}{r|lll}
-        & \bf Pseudo-spectral &
-        \bf Point collocation & \bf Monte Carlo \\ \\ \hline \pause\\
-        Efficiency              & \color{green} Highest
-            & \color{green} Very high & \color{red} Very low  \pause\\\\
-        Stability               & \color{red} Low
-            & Medium   & \color{green}Very high \pause\\\\
-            Dimension-independence  & \color{red} Lowest
-            & \color{red} Low    & \color{green} Highest
-    \end{tabular}
-\end{frame}
+% \begin{frame}{Which method to choose for your problem depends on the problem}{}
+%     \scriptsize
+%     \begin{tabular}{r|lll}
+%         & \bf Pseudo-spectral &
+%         \bf Point collocation & \bf Monte Carlo \\ \\ \hline \pause\\
+%         Efficiency              & \color{green} Highest
+%             & \color{green} Very high & \color{red} Very low  \pause\\\\
+%         Stability               & \color{red} Low
+%             & Medium   & \color{green}Very high \pause\\\\
+%             Dimension-independence  & \color{red} Lowest
+%             & \color{red} Low    & \color{green} Highest
+%     \end{tabular}
+% \end{frame}
 
 
 % \begin{chaospy}{A surrogate model allows for computational cheap statistical analysis}
@@ -891,6 +957,26 @@ u_hat = cp.fit_regression(P, nodes, samples_u)
 % \end{chaospy}
 
 
+ \begin{frame}
+ \frametitle{Chaospy handles Polynomial Chaos expansions with stochastically dependent variables}
+
+Dependent variables break the orthogonality properties of the polynomials.
+
+\pause
+
+\vspace{7mm}
+
+The Rosenblatt transformation can be used to model dependent
+variables effectively as a parameterization of
+independent variables
+\begin{align*}
+        \hat u_M(x; q)
+        \onslide<2->{= \hat u_M(x; T(r))}
+        \onslide<3->{= \sum_{n=0}^N c_n(x) P_n(r)}
+    \end{align*}
+
+ \end{frame}
+
 
 \begin{chaospy}{The polynomial approximation can be used as a surrogate model, which allows for computational cheap statistical analysis}
     \scriptsize
@@ -904,6 +990,27 @@ mean = np.mean(samples_u, 1)
 var = np.var(samples_u, 1)
 \end{lstlisting}
 \end{chaospy}
+
+
+\begin{frame}{Advantages and disadvantages of Chaospy}{}
+\onslide<1->\bf \color{green} {Advantages}
+\begin{itemize}
+\onslide<1->\gooditem Modular
+\onslide<3->\gooditem The programming syntax lies close to the mathematical theory
+\onslide<5->\gooditem Supports both Monte Carlo and Polynomial Chaos
+\onslide<6->\gooditem Handles dependent variables
+\end{itemize}
+\vspace{8mm}
+\onslide<1->\bf\color{red} Disadvantages
+\begin{itemize}
+\onslide<2->\baditem Modular
+\onslide<4->\baditem The programming syntax lies close to the mathematical theory
+\onslide<7->\baditem Slow
+\end{itemize}
+
+\end{frame}
+
+
 
 
 
@@ -1014,6 +1121,8 @@ var = np.var(samples_u, 1)
     \node[align=left] at (image2.west) {\hspace{-7.95cm} \bf Polynomial Chaos expansions};
   \end{tikzpicture}
 
+
+
   \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
       \node [align=left, xshift=0.49\textwidth,yshift=-0.37\textwidth] (image2) at (current page.center)
             {\includegraphics[width = 0.35\textwidth]{cinpla.png}};
@@ -1024,11 +1133,64 @@ var = np.var(samples_u, 1)
               {\includegraphics[width = 0.18\textwidth]{chaospy_logo.jpg}};
       \end{tikzpicture}
 
-\pause
+% \pause
+% \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+%
+%   \node[align=left, yshift=0.1\textwidth] at (current page.south){ \bf Questions?};
+% \end{tikzpicture}
+%
+% \vspace{3.5cm}
+%
+%   \begin{alert}{Installation instructions:}\\
+%   \scriptsize
+%       \href{https://github.com/hplgit/chaospy}{https://github.com/hplgit/chaospy}\\
+% %\verb;http://github.com/hplgit/chaospy/;
+%   \end{alert}
+%
+%
+%
+%   \begin{alert}{References:}\\
+%   \scriptsize
+%       Feinberg, J., \& Langtangen, H. (2015). Chaospy: An open source tool for designing methods of uncertainty quantification. Journal Of Computational Science, 11, 46-57\\
+%       \href{http://www.sciencedirect.com/science/article/pii/S1877750315300119}{http://www.sciencedirect.com/science/article/pii/S1877750315300119}
+%   \end{alert}
+
+\end{frame}
+
+
+\begin{frame}{Summary: Chaospy is a modular software for uncertainty quantification with syntax that lies close to the mathematical theory}
+
+  \begin{alert}{Installation instructions:}\\
+  \scriptsize
+      \href{https://github.com/hplgit/chaospy}{https://github.com/hplgit/chaospy}\\
+%\verb;http://github.com/hplgit/chaospy/;
+  \end{alert}
+
+
+\vspace{7mm}
+
+  \begin{alert}{References:}\\
+  \scriptsize
+      Feinberg, J., \& Langtangen, H. (2015). Chaospy: An open source tool for designing methods of uncertainty quantification. Journal Of Computational Science, 11, 46-57\\
+      \href{http://www.sciencedirect.com/science/article/pii/S1877750315300119}{http://www.sciencedirect.com/science/article/pii/S1877750315300119}
+  \end{alert}
+
+  \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+      \node [align=left, xshift=0.49\textwidth,yshift=-0.37\textwidth] (image2) at (current page.center)
+            {\includegraphics[width = 0.35\textwidth]{cinpla.png}};
+    \end{tikzpicture}
+
+    \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
+        \node [align=left, xshift=-0.45\textwidth,yshift=-0.37\textwidth] (image2) at (current page.center)
+              {\includegraphics[width = 0.18\textwidth]{chaospy_logo.jpg}};
+      \end{tikzpicture}
+
+
 \begin{tikzpicture}[remember picture, overlay, font=\sffamily]
 
-  \node[align=left, yshift=0.1\textwidth] at (current page.south){ \bf Questions?};
+  \node[align=left, yshift=0.15\textwidth] at (current page.south){ \bf \large Questions?};
 \end{tikzpicture}
+
 
 
 \end{frame}

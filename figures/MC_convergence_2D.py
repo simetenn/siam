@@ -18,6 +18,9 @@ legend = []
 # pl.legend(["Mean","Variance", "Monte Carlo","Polynomial chaos"],loc=3,prop={"size" :12})
 # pl.xlim([0,20])
 # pl.ylim([10**-16,10**2])
+#pl.plot(-1,1, "g")
+
+
 
 
 def E_analytical(x):
@@ -60,6 +63,28 @@ def MC():
     return np.array(error), np.array(var)
 
 
+def qMC():
+    samples_a = a.sample(N, rule="L")
+    samples_I = I.sample(N, rule="L")
+
+    U = [u(T,q,i) for q,i in zip(samples_a.T, samples_I.T)]
+    U = np.array(U)
+
+    E = (np.cumsum(U, 0).T/np.arange(1,N+1)).T
+    V = (np.cumsum((U-E)**2, 0).T/np.arange(1,N+1)).T
+    #V = (np.cumsum((U**2), 0).T/np.arange(1,N+1)).T - E**2
+
+
+    error = []
+    var = []
+    for n in xrange(N):
+        error.append(dt*np.sum(np.abs(E_analytical(T) - E[n,:])))
+        var.append(dt*np.sum(np.abs(V_analytical(T) - V[n,:])))
+
+    return np.array(error), np.array(var)
+
+
+
 reruns = 10**2
 totalerrorMC = np.zeros(N)
 totalvarianceMC = np.zeros(N)
@@ -72,6 +97,22 @@ for i in xrange(reruns):
 
 totalerrorMC = np.divide(totalerrorMC, reruns)
 totalvarianceMC = np.divide(totalvarianceMC, reruns)
+
+
+
+reruns = 10**2
+totalerrorqMC = np.zeros(N)
+totalvarianceqMC = np.zeros(N)
+for i in xrange(reruns):
+    errorqMC,varianceqMC = qMC()
+
+    totalerrorqMC = np.add(totalerrorqMC, errorqMC)
+    totalvarianceqMC = np.add(totalvarianceqMC, varianceqMC)
+
+
+totalerrorqMC = np.divide(totalerrorqMC, reruns)
+totalvarianceqMC = np.divide(totalvarianceqMC, reruns)
+
 
 
 errorCP = []
@@ -94,14 +135,23 @@ for n in xrange(0,N+1):
 
 # pl.rc("figure", figsize=[6,4])
 
-prettyPlot(totalerrorMC[:])
-prettyPlot(totalvarianceMC[:], title="", xlabel="Evaluations", ylabel="Error", color=1, new_figure=False)
+ax, tableau20 = prettyPlot()
+pl.plot(-1, 1, "k-", linewidth=2)
+pl.plot(-1, 1, "k--", linewidth=2)
+pl.plot(-1, 1, color=tableau20[0], linewidth=2)
+
+
+pl.legend(["Mean", "Variance", "Monte Carlo"], loc=1, prop={"size": 18})
+
+ax, tableau20 = prettyPlot(totalerrorMC[:], new_figure=False)
+prettyPlot(totalvarianceMC[:], title="", xlabel="Evaluations", ylabel="Error", color=0, linestyle="--", new_figure=False)
 
 pl.xlim([0, 49])
 pl.ylim([10**-0, 2*10**1])
 
+
 pl.yscale('log')
-pl.legend(["Mean,      Monte Carlo", "Variance, Monte Carlo"], loc=1)
+# pl.legend(["Mean,      Monte Carlo", "Variance, Monte Carlo"], loc=1)
 pl.savefig("MC_convergence_2D.png")
 
 pl.show()
@@ -114,16 +164,60 @@ pl.show()
 # pl.xlabel("Evaluations")
 # pl.ylabel("Error")
 
-prettyPlot(totalerrorMC[:])
-prettyPlot(totalvarianceMC[:], title="", xlabel="Evaluations", ylabel="Error", color=1, new_figure=False)
 
-prettyPlot(K, errorCP, title="", xlabel="Evaluations", ylabel="Error", color=2, new_figure=False)
-prettyPlot(K, varCP, title="", xlabel="Evaluations", ylabel="Error", color=3, new_figure=False)
+ax, tableau20 = prettyPlot()
+pl.plot(-1, 1, "k-", linewidth=2)
+pl.plot(-1, 1, "k--", linewidth=2)
+pl.plot(-1, 1, color=tableau20[0], linewidth=2)
+pl.plot(-1, 1, color=tableau20[2], linewidth=2)
+
+pl.legend(["Mean", "Variance", "Monte Carlo", "quasi-Monte Carlo", "Polynomial chaos"], loc=3, prop={"size": 18})
+
+prettyPlot(totalerrorMC[:], new_figure=False)
+prettyPlot(totalvarianceMC[:], title="", xlabel="Evaluations", ylabel="Error", color=0, linestyle="--", new_figure=False)
+
+prettyPlot(totalerrorqMC[:], title="", xlabel="Evaluations", ylabel="Error", color=2, new_figure=False)
+prettyPlot(totalvarianceqMC[:], title="", xlabel="Evaluations", ylabel="Error", color=2, linestyle="--", new_figure=False)
+
+pl.xlim([0, 49])
+pl.ylim([10**-2, 2*10**1])
+
+pl.yscale('log')
+# pl.legend(["Mean,      Monte Carlo",
+#            "Variance,  Monte Carlo",
+#            "Mean,      quasi-Monte Carlo",
+#            "Variance,  quasi-Monte Carlo"], loc=3)
+
+
+
+pl.savefig("qMC-MC_convergence_2D.png")
+pl.show()
+
+
+ax, tableau20 = prettyPlot()
+pl.plot(-1, 1, "k-", linewidth=2)
+pl.plot(-1, 1, "k--", linewidth=2)
+pl.plot(-1, 1, color=tableau20[0], linewidth=2)
+pl.plot(-1, 1, color=tableau20[2], linewidth=2)
+pl.plot(-1, 1, color=tableau20[4], linewidth=2)
+
+pl.legend(["Mean", "Variance", "Monte Carlo", "quasi-Monte Carlo", "Polynomial chaos"], loc=3, prop={"size": 18})
+
+
+ax, tableau20 = prettyPlot(totalerrorMC[:], new_figure=False)
+prettyPlot(totalvarianceMC[:], title="", xlabel="Evaluations", ylabel="Error", color=0, linestyle="--", new_figure=False)
+
+
+prettyPlot(totalerrorqMC[:], title="", xlabel="Evaluations", ylabel="Error", color=2, new_figure=False)
+prettyPlot(totalvarianceqMC[:], title="", xlabel="Evaluations", ylabel="Error", color=2, linestyle="--", new_figure=False)
+
+prettyPlot(K, errorCP, title="", xlabel="Evaluations", ylabel="Error", color=4, new_figure=False)
+prettyPlot(K, varCP, title="", xlabel="Evaluations", ylabel="Error", color=4, linestyle="--",new_figure=False)
 
 pl.xlim([0, 49])
 pl.ylim([10**-15, 2*10**1])
 
 pl.yscale('log')
-pl.legend(["Mean,      Monte Carlo", "Variance, Monte Carlo", "Mean,      Polynomial Chaos", "Variance, Polynomial Chaos"], loc=3)
-pl.savefig("MC-PC_convergence_2D.png")
+
+pl.savefig("qMC-MC-PC_convergence_2D.png")
 pl.show()
