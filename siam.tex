@@ -254,13 +254,13 @@ Chaospy is modular with a programming syntax that lies close the the mathematica
  \frametitle{Our model problem will be a simple differential equation}
  \vspace{-10mm}
   \begin{align*}
-    \frac{d u(x)}{dx} & =-au(x),\qquad u(0) = I
+    \frac{d u(x)}{dx} & =-au(x),\qquad u(0) = I.
   \end{align*}
   \vspace{-5 mm}
   \begin{itemize}
-    \item[$u$] The quantity of interest
-    \item[$x$] Spatial location
-    \item[$a,I$] Parameters containing uncertainties
+    \item[$u$] The quantity of interest.
+    \item[$x$] Spatial location.
+    \item[$a,I$] Parameters containing uncertainties.
   \end{itemize}
 
 \vspace{-5 mm}
@@ -272,7 +272,7 @@ a &\sim \text{Uniform(0, 0.1)} & I& \sim \text{Uniform(8, 10)}
 \pause
 \vspace{5 mm}
 Analytical solution
-\[u(x; a, I) = Ie^{-ax}\]
+\[u(x; a, I) = Ie^{-ax}.\]
 
 \pause
 \vspace{5mm}
@@ -584,9 +584,9 @@ Var = np.var(samples_u, 0)
  \frametitle{Chaospy is built around the Rosenblatt transformation which enables several usefull properties}
 
 \begin{itemize}[<+->]
-\item Sampling of all probability distributions
+\item Sampling of all probability distributions.
 \vspace{3mm}
-\item Quasi-Monte Carlo sampling is available for any probability distribution
+\item Quasi-Monte Carlo sampling is available for any probability distribution.
 % \vspace{3mm}
 % \item Polynomial Chaos expansions are available for any probability distribution, even dependent variables
 \end{itemize}
@@ -618,13 +618,15 @@ Var = np.var(samples_u, 0)
       && \sum_{n=0}^N && {\color<3>{red}c_n(x)}\quad && {\color<4>{red}P_n(q)}\\
       &&  &&  &&  &&  && {\color<3>{red}\text{Coefficient}} && {\color<4>{red}\text{Polynomial}}
   \end{align*}
+$q$ are the uncertain variables.
 
-\hspace{10.5mm} $q$ are the uncertain variables
-  \begin{align*}
-      N = \frac{(M + D)!}{M!D!} - 1, \quad D\text{ is the number of dimensions}\\
-  \end{align*}
+% \hspace{10.5mm} $q$ are the uncertain variables
+%   \begin{align*}
+%       N = \frac{(M + D)!}{M!D!} - 1, \quad D\text{ is the number of dimensions}\\
+%   \end{align*}
 \pause
-Mean and variance are calculated from $\hat u_M(x;q)$
+\vspace{1cm}
+Mean and variance are then calculated from $\hat u_M(x;q)$.
 \end{frame}
 
 % \begin{frame}
@@ -643,31 +645,32 @@ Mean and variance are calculated from $\hat u_M(x;q)$
 
 
 \begin{frame}
-  \frametitle{}
+  \frametitle{Want to have the Best Linear Unbiased Estimator (BLUE)}
 
 We have the variance criteria
 
 \[ \Var{|u - \hat u_M|}\]
+\pause
 
-and want to choose the Best Linear Unbiased Estimator (BLUE)
+and want to choose the Best Linear Unbiased Estimator (BLUE):
 \begin{align*}
     \E{\hat u_M} &= u\\
     \Var{|u - \hat u_M|} &\leq \Var{|u - \hat u^*|} &    &\forall  u^* \in P_M\\
-    &&& \forall M \in N
+    &&& \forall M \in |\mathbb{Z}^+|
 \end{align*}
-    All polynomials $P_n$ and coeffisients $c_n$ are free
+    All polynomials $P_n$ and coefficients $c_n$ are free.
 \end{frame}
 
 
 
 \begin{frame}
-    \frametitle{The only numerically stable method for calculating orthogonal polynomials is through the three-term discretized Stiltjes recursion}
-    Choosing the Best Linear Unbiased Estimator leads to:
+    \frametitle{We need to choose Askey-Wilson polynomials}
+Choosing the Best Linear Unbiased Estimator leads to:
 \begin{align*}
 \E{P_nP_m} &= 0  & \forall n \neq m\\
 \end{align*}
 
-Which is fulfilled by choosing orthogonal polynomials.
+Which is fulfilled by choosing Askey-Wilson polynomials, a family of orthogonal polynomials.
 \end{frame}
 
 
@@ -749,7 +752,7 @@ Which is fulfilled by choosing orthogonal polynomials.
 
 
 
-\begin{chaospy}{The only numerically stable method for calculating orthogonal polynomials is through the three-term discretized Stiltjes recursion}
+\begin{chaospy}{The only numerically stable method for calculating Askey-Wilson polynomials is through the three-term discretized Stiltjes recursion}
 \begin{lstlisting}[language=python]
 dist = cp.Normal()
 P = cp.orth_ttr(3, dist)
@@ -834,7 +837,7 @@ print P
 
 \begin{frame}
 \frametitle{$c_n$ is approximated by quadrature rules}
-    Choosing the Best Linear Unbiased Estimator leads to:
+    Choosing the Best Linear Unbiased Estimator also leads to:
 
 \begin{align*}
 c_n &= \frac{\E{uP_n}}{\E{P_n^2}}
@@ -845,7 +848,7 @@ $c_n$ is approximated by quadrature rules where the probability distribution is 
 
 
 \begin{chaospy}{
-  Generating nodes and weights in Chaospy}
+  Generating quadrature nodes and weights in Chaospy}
      % TODO
      % high: add code for 1-D gen_quad
      % high: list quadrature schemes
@@ -914,21 +917,21 @@ var = cp.Var(u_hat, dist)
 
 
 
-
- \begin{frame}{Different problems require different quadrature rules}{}
-     {
-         \def\arraystretch{1.2}
- \begin{tabular}{ll|l}
-  Key & & Description\\\hline
-     "Gaussian"& "G" &    Optimal Gaussian quadrature.\\
-     "Legendre"& "E" &    Gauss-Legendre quadrature\\
-     "Clenshaw"& "C" &    Clenshaw-Curtis quadrature.\\
-     "Leja"& ``J" &          Leja quadrature.\\
-     "Genz"& "Z" &        Hermite Genz-Keizter 16 rule.\\
-     "Patterson" & "P"&    Gauss-Patterson quadrature rule.\\
- \end{tabular}
- }
- \end{frame}
+ %
+ % \begin{frame}{Different problems require different quadrature rules}{}
+ %     {
+ %         \def\arraystretch{1.2}
+ % \begin{tabular}{ll|l}
+ %  Key & & Description\\\hline
+ %     "Gaussian"& "G" &    Optimal Gaussian quadrature.\\
+ %     "Legendre"& "E" &    Gauss-Legendre quadrature\\
+ %     "Clenshaw"& "C" &    Clenshaw-Curtis quadrature.\\
+ %     "Leja"& ``J" &          Leja quadrature.\\
+ %     "Genz"& "Z" &        Hermite Genz-Keizter 16 rule.\\
+ %     "Patterson" & "P"&    Gauss-Patterson quadrature rule.\\
+ % \end{tabular}
+ % }
+ % \end{frame}
 
 
 
@@ -1048,7 +1051,7 @@ independent variables
 \begin{align*}
         \hat u_M(x; q)
         \onslide<2->{= \hat u_M(x; T(r))}
-        \onslide<3->{= \sum_{n=0}^N c_n(x) P_n(r)}
+        \onslide<3->{= \sum_{n=0}^N c_n(x) P_n(r)}.
     \end{align*}
 
  \end{frame}
