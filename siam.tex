@@ -612,7 +612,7 @@ Var = np.var(samples_u, 0)
 
 
 \begin{frame}
-  \frametitle{The idea behind Polynomial Chaos (PC) theory is to approximate our model with a polynomial orthogonal in probability space}
+  \frametitle{The idea behind Polynomial Chaos (PC) theory is to approximate our model with a polynomial}
   \begin{align*}
       u(x; q) & &\approx && \hat u_M(x;q) && =
       && \sum_{n=0}^N && {\color<3>{red}c_n(x)}\quad && {\color<4>{red}P_n(q)}\\
@@ -623,8 +623,52 @@ Var = np.var(samples_u, 0)
   \begin{align*}
       N = \frac{(M + D)!}{M!D!} - 1, \quad D\text{ is the number of dimensions}\\
   \end{align*}
-
+\pause
 Mean and variance are calculated from $\hat u_M(x;q)$
+\end{frame}
+
+% \begin{frame}
+%   \frametitle{The idea behind Polynomial Chaos (PC) theory is to approximate our model with a polynomial orthogonal in probability space}
+%   \begin{align*}
+%       u(x; q) \approx \hat u_M(x;q)  &= \sum_{n=0}^N && {\color<3>{red}c_n(x)}\quad && {\color<4>{red}P_n(q)}, \qquad N = \frac{(M + D)!}{M!D!} - 1,\\
+%                                      &               && {\color<3>{red}\text{Coefficient}} && {\color<4>{red}\text{Polynomial}}
+%   \end{align*}
+%
+%
+% \begin{description}
+%     \item[D] - the number of dimensions
+%     \item[$q$] - the uncertain variables
+% \end{description}
+% \end{frame}
+
+
+\begin{frame}
+  \frametitle{}
+
+We want to minimize the variance
+
+\[ \Var{|u - \hat u_M|}\]
+%We want to minimise the variance
+
+We want to choose the Best Linear Unbiased Estimator (BLUE)
+\begin{align*}
+    \E{\hat u_M} &= u\\
+    \Var{|u - \hat u_M|} &\leq \Var{|u - \hat u^*|} &    &\forall  u^* \in P_M\\
+    &&& \forall M \in N
+\end{align*}
+    All polynomials $P_n$ and coeffisients $c_n$ are free
+\end{frame}
+
+
+
+\begin{frame}
+    \frametitle{The only numerically stable method for calculating orthogonal polynomials is through the three-term discretized Stiltjes recursion}
+    Choosing the Best Linear Unbiased Estimator leads to:
+\begin{align*}
+\E{P_nP_m} &= 0  & \forall n \neq m\\
+\end{align*}
+
+Which is fulfilled by choosing orthogonal polynomials.
 \end{frame}
 
 
@@ -717,20 +761,20 @@ print P
 \end{chaospy}
 
 
-\begin{frame}{Least squares minimization leads to a formula for $c_n$, named the \emph{pseudo-spectral method}}
-\vspace{-10mm}
-    \begin{align*}
-        \onslide<1->{ &\min_{c_0,\ldots,c_N} || u- \hat u_M||_Q^2 & \quad\text{where Q is a random vector, i.e. $(a, I )$}\\
-          &\qquad\vdots\quad&\\}
-        \onslide<2>{&c_n = \coef{u}{P_n} & \quad\text{Fourier coefficients}\\}
-        \onslide<3>{&c_n = \int \quad ... \quad dq &\\}
-    \end{align*}
-    The integrals in $c_n$ are approximated by quadrature rules where the probability distribution is used as a weight function.
-
-    % The integrals in $c_n$ are approximated by quadrature rules, which are
-    % optimal if we have a weight function. It turns out that all probability
-    % distribution qualify as weight functions.
-\end{frame}
+% \begin{frame}{Least squares minimization leads to a formula for $c_n$, named the \emph{pseudo-spectral method}}
+% \vspace{-10mm}
+%     \begin{align*}
+%         \onslide<1->{ &\min_{c_0,\ldots,c_N} || u- \hat u_M||_Q^2 & \quad\text{where Q is a random vector, i.e. $(a, I )$}\\
+%           &\qquad\vdots\quad&\\}
+%         \onslide<2>{&c_n = \coef{u}{P_n} & \quad\text{Fourier coefficients}\\}
+%         \onslide<3>{&c_n = \int \quad ... \quad dq &\\}
+%     \end{align*}
+%     The integrals in $c_n$ are approximated by quadrature rules where the probability distribution is used as a weight function.
+%
+%     % The integrals in $c_n$ are approximated by quadrature rules, which are
+%     % optimal if we have a weight function. It turns out that all probability
+%     % distribution qualify as weight functions.
+% \end{frame}
 
 % \begin{frame}{Coefficients can be calculated using the numerical integration Guassian Quadrature}{}
 %     \begin{align*}
@@ -765,6 +809,39 @@ print P
 % $q_k$ quadrature nodes, $\omega_k$ quadrature weights
 %
 % \end{frame}
+
+
+
+
+
+%
+% \begin{frame}
+%     This leads to
+% \begin{align*}
+% \E{P_nP_m} &= 0  & \forall n \neq m\\
+% c_n &= \frac{\E{uP_n}}{\E{P_n^2}}
+% \end{align*}
+%
+% Solution:
+% \begin{align*}
+%     \E{P_nP_m} &= 0 & &\text{Fulfilled by choosing orthogonal polynomials} \\
+%     c_n &&& \text{Can be approximated by quadrature rules, }\\
+%         &&& \text{the probability distribution is used as a weight function}
+% \end{align*}
+% \end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{$c_n$ is approximated by quadrature rules}
+    Choosing the Best Linear Unbiased Estimator leads to:
+
+\begin{align*}
+c_n &= \frac{\E{uP_n}}{\E{P_n^2}}
+\end{align*}
+$c_n$ is approximated by quadrature rules where the probability distribution is used as a weight function.
+\end{frame}
 
 
 
@@ -815,7 +892,7 @@ samples_u = [u(x, *node) for node in nodes.T]
 u_hat = cp.fit_quadrature(P, nodes, weights, samples_u
                           rule="Gaussian")
 |\pause|
-mean, = cp.E(u_hat, dist)
+mean = cp.E(u_hat, dist)
 var = cp.Var(u_hat, dist)
 \end{lstlisting}
 \end{chaospy}
