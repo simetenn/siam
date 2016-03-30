@@ -378,20 +378,17 @@ We want to compute E(u) and Var(u).
 \begin{lstlisting}[language=python]
 import chaospy as cp
 import numpy as np
-
-def u(x, a, I):
-    return I*np.exp(-a*x)
-
 |\pause|
 dist_a = cp.Uniform(0, 0.1)
 dist_I = cp.Uniform(8, 10)
+|\pause|
 dist = cp.J(dist_a, dist_I)
 |\pause|
 samples = dist.sample(size=1000)
 |\pause|
 x = np.linspace(0, 10, 100)
 |\pause|
-samples_u = [u(x, a, I) for a, I in samples]
+samples_u = [solver(x, a, I) for a, I in samples]
 |\pause|
 E = np.mean(samples_u, 0)
 Var = np.var(samples_u, 0)
@@ -534,23 +531,20 @@ Var = np.var(samples_u, 0)
 
 \begin{chaospy}{Quasi-Monte Carlo with Latin Hypercube sampling}
     \scriptsize
+
 \begin{lstlisting}[language=python]
 import chaospy as cp
 import numpy as np
-
-def u(x, a, I):
-    return I*np.exp(-a*x)
-
 
 dist_a = cp.Uniform(0, 0.1)
 dist_I = cp.Uniform(8, 10)
 dist = cp.J(dist_a, dist_I)
 
-samples = dist.sample(size=1000, |\color{red}{rule="L"}|)
-|\pause|
+samples = dist.sample(size=1000|\only<2>{, \color{red}{rule="L"}}|)
+
 x = np.linspace(0, 10, 100)
 
-samples_u = [u(x, a, I) for a, I in samples]
+samples_u = [solver(x, a, I) for a, I in samples]
 
 E = np.mean(samples_u, 0)
 Var = np.var(samples_u, 0)
@@ -876,14 +870,14 @@ Optimal Gaussian quadrature &&	Yes&	No&	Yes\\
  \begin{lstlisting}[language=python]
 dist_a = cp.Uniform(0, 0.1)
 dist_I = cp.Uniform(8, 10)
-dist = cp.J(a,I)
+dist = cp.J(dist_a,dist_I)
 |\pause|
 P = cp.orth_ttr(2, dist)
 |\pause|
 nodes, weights = cp.generate_quadrature(3, dist)
 |\pause|
 x = np.linspace(0, 10, 100)
-samples_u = [u(x, *node) for node in nodes.T]
+samples_u = [solver(x, *node) for node in nodes.T]
 |\pause|
 u_hat = cp.fit_quadrature(P, nodes, weights, samples_u
                           rule="Gaussian")
