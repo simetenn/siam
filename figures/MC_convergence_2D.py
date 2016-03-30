@@ -144,7 +144,7 @@ pl.plot(-1, 1, color=tableau20[0], linewidth=2)
 pl.legend(["Mean", "Variance", "Monte Carlo"], loc=1, prop={"size": 18})
 
 ax, tableau20 = prettyPlot(totalerrorMC[:], new_figure=False)
-prettyPlot(totalvarianceMC[:], title="", xlabel="Evaluations", ylabel="Error", color=0, linestyle="--", new_figure=False)
+prettyPlot(totalvarianceMC[:], title="", xlabel="No of forward model evaluations", ylabel="Error", color=0, linestyle="--", new_figure=False)
 
 pl.xlim([0, 49])
 pl.ylim([10**-0, 2*10**1])
@@ -161,7 +161,7 @@ pl.show()
 # pl.plot(totalvarianceMC[:],"r--",linewidth=2)
 # pl.plot(K,errorCP,"b-",linewidth=2)
 # pl.plot(K, varCP,"b--",linewidth=2)
-# pl.xlabel("Evaluations")
+# pl.xlabel("No of forward model evaluations")
 # pl.ylabel("Error")
 
 
@@ -174,10 +174,10 @@ pl.plot(-1, 1, color=tableau20[2], linewidth=2)
 pl.legend(["Mean", "Variance", "Monte Carlo", "quasi-Monte Carlo", "Polynomial chaos"], loc=3, prop={"size": 18})
 
 prettyPlot(totalerrorMC[:], new_figure=False)
-prettyPlot(totalvarianceMC[:], title="", xlabel="Evaluations", ylabel="Error", color=0, linestyle="--", new_figure=False)
+prettyPlot(totalvarianceMC[:], title="", xlabel="No of forward model evaluations", ylabel="Error", color=0, linestyle="--", new_figure=False)
 
-prettyPlot(totalerrorqMC[:], title="", xlabel="Evaluations", ylabel="Error", color=2, new_figure=False)
-prettyPlot(totalvarianceqMC[:], title="", xlabel="Evaluations", ylabel="Error", color=2, linestyle="--", new_figure=False)
+prettyPlot(totalerrorqMC[:], title="", xlabel="No of forward model evaluations", ylabel="Error", color=2, new_figure=False)
+prettyPlot(totalvarianceqMC[:], title="", xlabel="No of forward model evaluations", ylabel="Error", color=2, linestyle="--", new_figure=False)
 
 pl.xlim([0, 49])
 pl.ylim([10**-2, 2*10**1])
@@ -205,14 +205,14 @@ pl.legend(["Mean", "Variance", "Monte Carlo", "quasi-Monte Carlo", "Polynomial c
 
 
 ax, tableau20 = prettyPlot(totalerrorMC[:], new_figure=False)
-prettyPlot(totalvarianceMC[:], title="", xlabel="Evaluations", ylabel="Error", color=0, linestyle="--", new_figure=False)
+prettyPlot(totalvarianceMC[:], title="", xlabel="No of forward model evaluations", ylabel="Error", color=0, linestyle="--", new_figure=False)
 
 
-prettyPlot(totalerrorqMC[:], title="", xlabel="Evaluations", ylabel="Error", color=2, new_figure=False)
-prettyPlot(totalvarianceqMC[:], title="", xlabel="Evaluations", ylabel="Error", color=2, linestyle="--", new_figure=False)
+prettyPlot(totalerrorqMC[:], title="", xlabel="No of forward model evaluations", ylabel="Error", color=2, new_figure=False)
+prettyPlot(totalvarianceqMC[:], title="", xlabel="No of forward model evaluations", ylabel="Error", color=2, linestyle="--", new_figure=False)
 
-prettyPlot(K, errorCP, title="", xlabel="Evaluations", ylabel="Error", color=4, new_figure=False)
-prettyPlot(K, varCP, title="", xlabel="Evaluations", ylabel="Error", color=4, linestyle="--",new_figure=False)
+prettyPlot(K, errorCP, title="", xlabel="No of forward model evaluations", ylabel="Error", color=4, new_figure=False)
+prettyPlot(K, varCP, title="", xlabel="No of forward model evaluations", ylabel="Error", color=4, linestyle="--",new_figure=False)
 
 pl.xlim([0, 49])
 pl.ylim([10**-15, 2*10**1])
