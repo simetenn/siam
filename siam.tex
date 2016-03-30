@@ -1,5 +1,5 @@
-%\documentclass[handout]{beamer}
-\documentclass[presentation]{beamer}
+\documentclass[handout]{beamer}
+%\documentclass[presentation]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, pdfpages, pdflscape, lscape, color, listings, hyperref, amssymb, graphicx,textcomp,varioref, afterpage, subcaption, float, bm, tikz, colortbl}
 
@@ -299,7 +299,7 @@ columns=fixed
 
 
 
-\begin{chaospy}{All Chaospy needs is a python wrapper around the model}
+\begin{chaospy}{All Chaospy needs is a Python wrapper around the model}
 \begin{lstlisting}[language=python]
 def solver(node):
     |\# \color{red}{set inital parameters for the model, given by node}|
@@ -386,9 +386,7 @@ dist = cp.J(dist_a, dist_I)
 |\pause|
 samples = dist.sample(size=1000)
 |\pause|
-x = np.linspace(0, 10, 100)
-|\pause|
-samples_u = [solver(x, a, I) for a, I in samples]
+samples_u = [solver(a, I) for a, I in samples]
 |\pause|
 E = np.mean(samples_u, 0)
 Var = np.var(samples_u, 0)
@@ -542,9 +540,7 @@ dist = cp.J(dist_a, dist_I)
 
 samples = dist.sample(size=1000|\only<2>{, \color{red}{rule="L"}}|)
 
-x = np.linspace(0, 10, 100)
-
-samples_u = [solver(x, a, I) for a, I in samples]
+samples_u = [solver(a, I) for a, I in samples]
 
 E = np.mean(samples_u, 0)
 Var = np.var(samples_u, 0)
@@ -556,7 +552,7 @@ Var = np.var(samples_u, 0)
 
 \begin{frame}
   \frametitle{Convergence of quasi-Monte Carlo is better than Monte Carlo, but still slow}
-
+\vspace{-5mm}
   \begin{center}
     \includegraphics[width=1\textwidth]{qMC-MC_convergence_2D.png}
   \end{center}
@@ -707,7 +703,7 @@ This is fulfilled by choosing Askey-Wilson polynomials, a family of orthogonal p
 \begin{lstlisting}[language=python]
 dist = cp.Normal()
 P = cp.orth_ttr(3, dist)
-
+|\pause|
 print P
 [1.0, q0, q0^2-1.0, q0^3-3.0q0]
 \end{lstlisting}
@@ -806,7 +802,7 @@ Modified Gram–Schmidt &&	Yes &	Yes & Yes\\
 
 
 \begin{frame}
-\frametitle{$c_n$ is approximated by quadrature rules}
+\frametitle{$c_n$ is approximated by quadrature rules, called the pseudo-spectral method}
     Choosing the Best Linear Unbiased Estimator also leads to:
 
 \begin{align*}
@@ -876,8 +872,7 @@ P = cp.orth_ttr(2, dist)
 |\pause|
 nodes, weights = cp.generate_quadrature(3, dist)
 |\pause|
-x = np.linspace(0, 10, 100)
-samples_u = [solver(x, *node) for node in nodes.T]
+samples_u = [solver(*node) for node in nodes.T]
 |\pause|
 u_hat = cp.fit_quadrature(P, nodes, weights, samples_u
                           rule="Gaussian")
@@ -999,42 +994,6 @@ var = cp.Var(u_hat, dist)
 %     \end{tabular}
 % \end{frame}
 
-
- \begin{frame}
- \frametitle{Chaospy handles Polynomial Chaos expansions with stochastically dependent variables}
-
-Dependent variables break the orthogonality properties of the polynomials.
-
-\pause
-
-\vspace{7mm}
-
-The Rosenblatt transformation can be used to model dependent
-variables effectively as a parameterization of
-independent variables
-\begin{align*}
-        \hat u_M(x; q)
-        \onslide<2->{= \hat u_M(x; T(r))}
-        \onslide<3->{= \sum_{n=0}^N c_n(x) P_n(r)}.
-    \end{align*}
-
- \end{frame}
-
-
-%\begin{chaospy}{The polynomial approximation can be used as a surrogate model, which allows for computationally cheap statistical analysis}
-%    \scriptsize
-% \begin{lstlisting}[language=python]
-%u_hat = cp.fit_quadrature(P, nodes, weights, solves)
-%|\pause|
-%samples_q = dist.sample(10**6)
-%samples_u = u_hat(*samples_q)
-%|\pause|
-%mean = np.mean(samples_u, 1)
-%var = np.var(samples_u, 1)
-%\end{lstlisting}
-%\end{chaospy}
-
-
 \begin{chaospy}{It is easy to create new custom methods with Chaospy}
 
 Create new probability distributions through \lstinline{cp.construct} and defining the cumulative distribution function.
@@ -1053,6 +1012,57 @@ print phi
 [1, q0, q1, q0^2-1, q0q1, -1+q1^2]
 \end{lstlisting}
 \end{chaospy}
+
+
+
+
+
+ \begin{frame}
+ \frametitle{Chaospy handles Polynomial Chaos expansions with stochastically dependent variables}
+
+\# Diffusion in layered media with uncertain boundaries problem.
+
+Dependent variables break the orthogonality properties of the polynomials.
+
+Chaospy uses Rosenblatt transformations to solve this problem.
+
+\end{frame}
+
+
+%\begin{chaospy}{Chaospy handles Polynomial Chaos expansions with stochastically dependent variables}
+%  \scriptsize
+%\begin{lstlisting}[language=Python]
+%
+%C = [[1,0.5],[0.5,1]]
+%mu = np.array([0, 0])
+%dist_Q = cp.MvNormal(mu, C)|\pause|
+%dist_R = cp.J(cp.Normal(), cp.Normal())
+%
+%P = cp.orth_ttr(M, dist_R)|\pause|
+%nodes_R, weights_R = cp.generate_quadrature(M+1, dist_R)|\pause|
+%nodes_Q = dist_Q.inv(dist_R.fwd(nodes_R))|\pause|
+%weights_Q = weights_R*\
+%    dist_Q.pdf(nodes_Q)/dist_R.pdf(nodes_R)
+%|\pause|
+%samples_u = [solver(*node) for node in nodes_Q.T]|\pause|
+%u_hat = cp.fit_quadrature(P, nodes_R, weights_Q, samples_u)
+%\end{lstlisting}
+%\end{chaospy}
+
+
+
+%\begin{chaospy}{The polynomial approximation can be used as a surrogate model, which allows for computationally cheap statistical analysis}
+%    \scriptsize
+% \begin{lstlisting}[language=python]
+%u_hat = cp.fit_quadrature(P, nodes, weights, solves)
+%|\pause|
+%samples_q = dist.sample(10**6)
+%samples_u = u_hat(*samples_q)
+%|\pause|
+%mean = np.mean(samples_u, 1)
+%var = np.var(samples_u, 1)
+%\end{lstlisting}
+%\end{chaospy}
 
 
 
