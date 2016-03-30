@@ -179,7 +179,7 @@ columns=fixed
 
   \vspace{5mm}
 \pause
-Chaospy is modular with a programming syntax that lies close the the mathematical theory.
+Chaospy is modular with a programming syntax that lies close to the mathematical theory.
 
 \begin{columns}
      \column{.5\textwidth}
@@ -472,7 +472,7 @@ Var = np.var(samples_u, 0)
 
 
 \begin{frame}[fragile]
- \frametitle{Chaospy have several variance reduction technices used when sampling a distribution}
+ \frametitle{Chaospy have several variance reduction techniques used when sampling a distribution}
  % TODO
  % compare 4 schemes: ' ', 'M', 'S', 'L'
  % remove margins
@@ -581,7 +581,7 @@ Var = np.var(samples_u, 0)
  \end{frame}
 
  \begin{frame}
- \frametitle{Chaospy is built around the Rosenblatt transformation which enables several usefull properties}
+ \frametitle{Chaospy is built around the Rosenblatt transformation which enables several useful properties}
 
 \begin{itemize}[<+->]
 \item Sampling of all probability distributions.
@@ -670,7 +670,7 @@ Choosing the Best Linear Unbiased Estimator leads to:
 \E{P_nP_m} &= 0  & \forall n \neq m\\
 \end{align*}
 
-Which is fulfilled by choosing Askey-Wilson polynomials, a family of orthogonal polynomials.
+This is fulfilled by choosing Askey-Wilson polynomials, a family of orthogonal polynomials.
 \end{frame}
 
 
@@ -1057,7 +1057,7 @@ independent variables
  \end{frame}
 
 
-\begin{chaospy}{The polynomial approximation can be used as a surrogate model, which allows for computational cheap statistical analysis}
+\begin{chaospy}{The polynomial approximation can be used as a surrogate model, which allows for computationally cheap statistical analysis}
     \scriptsize
  \begin{lstlisting}[language=python]
 u_hat = cp.fit_quadrature(P, nodes, weights, solves)
