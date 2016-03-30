@@ -616,34 +616,34 @@ Mean and variance are then calculated from $\hat u_M(x;q)$.
 % \end{frame}
 
 
-\begin{frame}
-  \frametitle{Want to have the Best Linear Unbiased Estimator (BLUE)}
+%\begin{frame}
+%  \frametitle{Want to have the Best Linear Unbiased Estimator (BLUE)}
 
-We have the variance criteria
+%We have the variance criteria
 
-\[ \Var{|u - \hat u_M|}\]
-\pause
+%\[ \Var{|u - \hat u_M|}\]
+%\pause
 
-and want to choose the Best Linear Unbiased Estimator (BLUE):
-\begin{align*}
-    \E{\hat u_M} &= u\\
-    \Var{|u - \hat u_M|} &\leq \Var{|u - \hat u^*|} &    &\forall  u^* \in P_M\\
-    &&& \forall M \in |\mathbb{Z}^+|
-\end{align*}
-    All polynomials $P_n$ and coefficients $c_n$ are free.
-\end{frame}
+%and want to choose the Best Linear Unbiased Estimator (BLUE):
+%\begin{align*}
+%    \E{\hat u_M} &= u\\
+%    \Var{|u - \hat u_M|} &\leq \Var{|u - \hat u^*|} &    &\forall  u^* \in P_M\\
+%    &&& \forall M \in |\mathbb{Z}^+|
+%\end{align*}
+%    All polynomials $P_n$ and coefficients $c_n$ are free.
+%\end{frame}
 
 
 
-\begin{frame}
-    \frametitle{We need to choose Askey-Wilson polynomials}
-Choosing the Best Linear Unbiased Estimator leads to:
-\begin{align*}
-\E{P_nP_m} &= 0  & \forall n \neq m\\
-\end{align*}
+%\begin{frame}
+%    \frametitle{We need to choose Askey-Wilson polynomials}
+%Choosing the Best Linear Unbiased Estimator leads to:
+%\begin{align*}
+%\E{P_nP_m} &= 0  & \forall n \neq m\\
+%\end{align*}
 
-This is fulfilled by choosing Askey-Wilson polynomials, a family of orthogonal polynomials.
-\end{frame}
+%This is fulfilled by choosing Askey-Wilson polynomials, a family of orthogonal polynomials.
+%\end{frame}
 
 
 % \begin{frame}
@@ -699,7 +699,7 @@ This is fulfilled by choosing Askey-Wilson polynomials, a family of orthogonal p
 
 
 
-\begin{chaospy}{The only numerically stable method for calculating Askey-Wilson polynomials is through the three-term discretized Stiltjes recursion}
+\begin{chaospy}{$P_n$ are orthogonal polynomials and are generaly calculated through the three-term discretized Stiltjes recursion}
 \begin{lstlisting}[language=python]
 dist = cp.Normal()
 P = cp.orth_ttr(3, dist)
@@ -801,25 +801,24 @@ Modified Gram–Schmidt &&	Yes &	Yes & Yes\\
 
 
 
-\begin{frame}
-\frametitle{$c_n$ is approximated by quadrature rules, called the pseudo-spectral method}
-    Choosing the Best Linear Unbiased Estimator also leads to:
+%\begin{frame}
+%\frametitle{$c_n$ is approximated by quadrature rules, called the pseudo-spectral method}
+%    Choosing the Best Linear Unbiased Estimator also leads to:
+%
+%\begin{align*}
+%c_n &= \frac{\E{uP_n}}{\E{P_n^2}}
+%\end{align*}
+%$c_n$ is approximated by quadrature rules where the probability distribution is used as a weight function.
+%\end{frame}
 
-\begin{align*}
-c_n &= \frac{\E{uP_n}}{\E{P_n^2}}
-\end{align*}
-$c_n$ is approximated by quadrature rules where the probability distribution is used as a weight function.
-\end{frame}
 
 
-
-\begin{chaospy}{
-  Generating quadrature nodes and weights in Chaospy}
+\begin{chaospy}{$c_n$ is approximated by quadrature rules, called the pseudo-spectral method}
      % TODO
      % high: add code for 1-D gen_quad
      % high: list quadrature schemes
     \scriptsize
-\onslide<1->
+
 \begin{lstlisting}[language=python]
 dist = cp.Normal()
 nodes, weights = cp.generate_quadrature(2, dist, rule="G")
