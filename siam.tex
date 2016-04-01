@@ -1,7 +1,7 @@
 \documentclass[handout]{beamer}
 %\documentclass[presentation]{beamer}
 \usepackage[utf8]{inputenc}
-\usepackage{amsmath, pdfpages, pdflscape, lscape, color, listings, hyperref, amssymb, graphicx,textcomp,varioref, afterpage, subcaption, float, bm, tikz, colortbl}
+\usepackage{amsmath, pdfpages, pdflscape, lscape, color, listings, hyperref, amssymb, graphicx, textcomp,varioref, afterpage, subcaption, float, bm, tikz, colortbl}
 
 \global
 \newcommand{\Fig}[1]{Figure \ref{#1}}
@@ -378,7 +378,7 @@ dist = cp.J(dist_a, dist_I)
 samples = dist.sample(size=1000)
 |\pause|
 # solver returns u(x), where x is fixed
-# solver_u: list of all u(x) for each set of a and I
+# samples_u: list of all u(x) for each set of a and I
 samples_u = [solver(a, I) for a, I in samples]
 |\pause|
 E = np.mean(samples_u, 0)
